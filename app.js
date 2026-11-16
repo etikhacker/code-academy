@@ -12,6 +12,7 @@
   const CLASSIC_BEFORE = 1991;
   const SLIDE_MS = 7000;
   const HERO_FALLBACK_COUNT = 5;
+  const MIN_BACKDROP_WIDTH = 1280; // bundan kiçik kadr hero-da tam ekran dartılmır
   const TOP_COUNT = 10;
   const YT_ID = /^[A-Za-z0-9_-]{11}$/;
 
@@ -362,7 +363,7 @@
       key: 'top',
       id: 'top10',
       title: 'Top 10',
-      note: 'films.js-dəki ilk 10 film',
+      note: 'Redaksiyanın seçimi',
       ranked: true,
       source: () => films.slice(0, TOP_COUNT),
       emptyAll: () => ({ title: 'Hələ film əlavə edilməyib', text: 'Filmləri films.js faylına əlavə etdikdən sonra onlar burada görünəcək.' })
@@ -629,30 +630,62 @@
   const slideEls = [];
   const dotEls = [];
 
-  /** Slaydın fonu: kadr (backdrop) → posterin bulanıq versiyası → qradiyent. Şəkil src-i sonra verilir. */
+  /**
+   * Slaydın fonu:
+   *  - kadr (backdrop) en azı 1280 px-dirsə → tam ekran kadr;
+   *  - kiçikdirsə və ya yoxdursa → posterin güclü bulanıq, qaranlıq "ambient" versiyası;
+   *  - heç biri yoxdursa → qradiyent.
+   * Şəkil src-i slayd növbəyə yaxınlaşanda verilir (loadSlideImages).
+   */
   function heroBackground(film) {
     const bg = h('div', { class: 'hero__bg', 'aria-hidden': 'true' });
-    const src = film.backdrop || film.poster;
-    if (src) {
-      if (!film.backdrop) bg.classList.add('hero__bg--blur');
-      const img = h('img', { alt: '', decoding: 'async', 'data-src': src });
-      img.addEventListener('error', () => {
-        img.hidden = true;
-        bg.classList.remove('hero__bg--blur');
-        bg.classList.add('hero__bg--art');
-        bg.setAttribute('style', paletteOf(film));
-      }, { once: true });
-      bg.append(img);
-    } else {
+    if (!film.backdrop && !film.poster) {
       bg.classList.add('hero__bg--art');
       bg.setAttribute('style', paletteOf(film));
+      return bg;
     }
+    const img = h('img', { alt: '', decoding: 'async' });
+    img.dataset.backdrop = film.backdrop;
+    img.dataset.poster = film.poster;
+    bg.append(img);
     return bg;
+  }
+
+  function useAmbient(bg, img, src) {
+    bg.classList.add('hero__bg--ambient');
+    if (img.getAttribute('src') !== src) img.src = src;
+    else img.classList.add('is-ready');
+  }
+
+  function loadHeroBackground(bg) {
+    const img = $('img', bg);
+    if (!img || img.dataset.started) return;
+    img.dataset.started = '1';
+    const { backdrop, poster } = img.dataset;
+    img.addEventListener('load', () => {
+      const isBackdrop = img.getAttribute('src') === backdrop;
+      if (isBackdrop && img.naturalWidth < MIN_BACKDROP_WIDTH && !bg.classList.contains('hero__bg--ambient')) {
+        // kiçik kadr dartılmasın: posterin (o da yoxdursa kadrın özünün) bulanıq versiyası
+        useAmbient(bg, img, poster || backdrop);
+        return;
+      }
+      img.classList.add('is-ready');
+    });
+    img.addEventListener('error', () => {
+      if (img.getAttribute('src') === backdrop && poster) { useAmbient(bg, img, poster); return; }
+      img.hidden = true;
+      bg.classList.remove('hero__bg--ambient');
+      bg.classList.add('hero__bg--art');
+    });
+    if (backdrop) img.src = backdrop;
+    else useAmbient(bg, img, poster);
   }
 
   /** Slaydın şəkillərini yükləməyə başla (aktiv və növbəti slayd üçün çağırılır). */
   function loadSlideImages(slide) {
     if (!slide) return;
+    const bg = $('.hero__bg', slide);
+    if (bg) loadHeroBackground(bg);
     $$('img[data-src]', slide).forEach((img) => {
       img.src = img.dataset.src;
       img.removeAttribute('data-src');
@@ -718,22 +751,35 @@
       els.heroDots.hidden = true;
     } else {
       slides.forEach((film, i) => {
-        const fill = h('span', { class: 'hero__dot-fill' });
-        // nöqtənin doluluq animasiyası bitəndə növbəti slayda keçilir (hover-də animasiya dayanır)
-        fill.addEventListener('animationend', (e) => {
-          if (e.animationName === 'dotFill' && i === slideIndex && !reducedMotion()) goToSlide(slideIndex + 1);
-        });
         const dot = h('button', {
           type: 'button',
           class: 'hero__dot',
           'aria-label': `Slayd ${i + 1}: ${film.title}`,
           onclick: () => goToSlide(i)
-        }, fill);
+        }, h('span', { class: 'hero__dot-fill' }));
         dotEls.push(dot);
         els.heroDots.append(dot);
       });
+      // sol/sağ oxlar
+      const arrow = (dir, label) => h('button', {
+        type: 'button',
+        class: `hero__arrow hero__arrow--${dir < 0 ? 'prev' : 'next'}`,
+        'aria-label': label,
+        svg: arrowSvg(dir),
+        onclick: () => goToSlide(slideIndex + dir)
+      });
+      els.hero.append(arrow(-1, 'Əvvəlki film'), arrow(1, 'Növbəti film'));
+      enableSwipe();
     }
     goToSlide(0);
+  }
+
+  /* Avtomatik keçid: sadə 7 saniyəlik taymer. Nöqtənin dolması yalnız göstəricidir. */
+  let slideTimer = 0;
+  function scheduleNextSlide() {
+    clearTimeout(slideTimer);
+    if (slideEls.length < 2 || document.hidden) return;
+    slideTimer = setTimeout(() => goToSlide(slideIndex + 1), SLIDE_MS);
   }
 
   function goToSlide(i) {
@@ -752,16 +798,37 @@
       const active = k === slideIndex;
       dot.classList.remove('is-active');
       if (active) {
-        void dot.offsetWidth; // doluluq animasiyasını yenidən başlat
+        void dot.offsetWidth; // doluluq göstəricisini yenidən başlat
         dot.classList.add('is-active');
       }
       dot.setAttribute('aria-current', active ? 'true' : 'false');
     });
+    scheduleNextSlide();
   }
 
-  // Tab gizlənəndə slayder dayansın
+  /** Telefonda barmaqla sola/sağa sürüşdürmə. */
+  function enableSwipe() {
+    let x0 = null;
+    let y0 = 0;
+    els.heroSlides.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      x0 = e.touches[0].clientX;
+      y0 = e.touches[0].clientY;
+    }, { passive: true });
+    els.heroSlides.addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      const dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) goToSlide(slideIndex + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
+  // Yalnız tab gizli olanda slayder dayansın; qayıdanda yenidən 7 saniyə saymağa başlasın
   document.addEventListener('visibilitychange', () => {
     els.hero.classList.toggle('is-paused', document.hidden);
+    if (document.hidden) clearTimeout(slideTimer);
+    else if (slideEls.length > 1) goToSlide(slideIndex);
   });
 
   /* ---------- Janr çipləri ---------- */
@@ -836,7 +903,6 @@
 
     // body scroll-unu blokla, arxa fonu əlçatmaz et, slayderi dayandır
     document.body.classList.add('is-locked');
-    els.hero.classList.add('is-paused');
     backgroundEls.forEach((el) => el && el.setAttribute('inert', ''));
 
     els.modal.hidden = false;
@@ -851,7 +917,6 @@
     removeTrailer(); // video dərhal dayansın
     els.modal.classList.remove('is-open');
     document.body.classList.remove('is-locked');
-    els.hero.classList.toggle('is-paused', document.hidden);
     backgroundEls.forEach((el) => el && el.removeAttribute('inert'));
     modalFilmId = null;
 

@@ -27,7 +27,7 @@ Sonra brauzerdə `http://localhost:8000` ünvanını açın.
 
 ## Film əlavə etmək
 
-`films.js` faylında 33 real Azərbaycan filmi var: 1991-ci ildən əvvəl çəkilmiş 20 və sonra çəkilmiş 13 film. Hər filmin adı, ili və janrı `source` linkindəki Vikipediya məqaləsindən yoxlanılıb, təsvirlər isə öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi kanallardandır ("Azərbaycanfilm" kinostudiyası və filmlərin istehsalçıları). Şəkillər `posters/` (şaquli poster, ~600px en) və `backdrops/` (filmdən geniş kadr) qovluqlarındadır; hər filmin `imageSource` sahəsində şəklin götürüldüyü səhifə göstərilir.
+`films.js` faylında 33 real Azərbaycan filmi var: 1991-ci ildən əvvəl çəkilmiş 20 və sonra çəkilmiş 13 film. Hər filmin adı, ili və janrı `source` linkindəki Vikipediya məqaləsindən yoxlanılıb, təsvirlər isə öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi kanallardandır ("Azərbaycanfilm" kinostudiyası və filmlərin istehsalçıları). Şəkillər `posters/` (şaquli poster, ~600px en) və `backdrops/` (filmdən geniş kadr, WebP) qovluqlarındadır. Eni 1280 px-dən kiçik kadrlar hero-da dartılmır — orada posterin bulanıq "ambient" fonu göstərilir, kadr isə film pəncərəsinin bannerində qalır; hər filmin `imageSource` sahəsində şəklin götürüldüyü səhifə göstərilir.
 
 > **Şəkillərin hüquqi statusu:** posterlərin demək olar hamısı Vikipediyada "ədalətli istifadə" (fair use) statusunda saxlanılan qeyri-azad şəkillərdir, kadrlar isə "Azərbaycanfilm"in rəsmi YouTube önizləmələrindən və treylerlərindən götürülüb. Onlar burada yalnız tədris məqsədilə, filmi tanıtmaq üçün kiçik ölçüdə istifadə olunur. Sayt ictimai yayımlanacaqsa, hüquq sahiblərinin şərtlərini nəzərə alın.
 
@@ -54,9 +54,9 @@ Yeni film əlavə etmək üçün `FILMS` massivinə bu formada obyekt yazın:
 
 Bütün bölmələr `films.js`-dən avtomatik yaranır.
 
-- **Hero slayder:** `featured: true` olan filmlər (yoxdursa, ilk 5 film) hər 7 saniyədən bir fade ilə dəyişir. Altda nöqtə göstəriciləri var. Siçan üzərində olanda, film pəncərəsi açıq olanda və ya tab gizli olanda slayder dayanır. Sağda filmin posteri, fonda isə onun bulanıq versiyası görünür. Başlığın altında il, janr və 1991-dən əvvəlki filmlər üçün "Klassik" etiketi var.
+- **Hero slayder:** `featured: true` olan filmlər (yoxdursa, ilk 5 film) hər 7 saniyədən bir fade ilə dəyişir (JS taymer). Altda nöqtə göstəriciləri, sağda sol/sağ oxlar var, telefonda barmaqla sürüşdürmək olar. Slayder yalnız brauzer tabı gizli olanda dayanır. Sağda filmin posteri, fonda isə onun bulanıq versiyası görünür. Başlığın altında il, janr və 1991-dən əvvəlki filmlər üçün "Klassik" etiketi var.
 - **Janr çipləri:** hero-nun altındadır, basanda janr filtrini dəyişir (menyudakı janr seçimi ilə sinxrondur).
-- **Sıralar:** Top 10 (`films.js`-dəki ilk 10 film, böyük konturlu rəqəmlərlə), Azərbaycan kinosu, Siyahım, Klassiklər, hər janr üçün ayrıca sıra, Onilliklər üzrə (onillik düymələri ilə).
+- **Sıralar:** Top 10 ("Redaksiyanın seçimi" — `films.js`-dəki ilk 10 film, böyük konturlu rəqəmlərlə), Azərbaycan kinosu, Siyahım, Klassiklər, hər janr üçün ayrıca sıra, Onilliklər üzrə (onillik düymələri ilə).
 - **"Azərbaycan kinosu rəqəmlərdə":** film sayı, janr sayı, ən köhnə və ən yeni filmin ili. Rəqəmlər ekrana girəndə 0-dan sayılır.
 - **Axtarış:** adın bir hissəsinə görə işləyir, böyük-kiçik hərfə baxmır və Azərbaycan hərflərini düzgün müqayisə edir (`İ/i`, `I/ı`). Axtarış və janr birlikdə bütün sıralara tətbiq olunur. Filtrdən sonra boş qalan janr sıraları gizlənir.
 - **Siyahım:** `localStorage`-da saxlanılır, yəni yalnız bu brauzerdə qalır.

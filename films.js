@@ -14,7 +14,8 @@
  *        istehsalçısı) yerləşən qısa treyler/fraqment. Tam film linki qoyulmayıb.
  *
  * poster:   posters/{id}.jpg — şaquli poster (~600px en). Boş ola bilər.
- * backdrop: backdrops/{id}.jpg — filmdən geniş kadr (hero fonu və modal banneri). Boş ola bilər.
+ * backdrop: backdrops/{id}.webp — filmdən geniş kadr. En azı 1280 px olanlar hero-da tam ekran,
+ *           kiçiklər yalnız modal bannerində göstərilir (hero-da posterin bulanıq fonu). Boş ola bilər.
  * imageSource: şəklin götürüldüyü səhifənin linki; poster və kadr fərqli mənbədəndirsə, linklərin siyahısı.
  *
  * Sahələr:
@@ -31,7 +32,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Ar%C5%9F%C4%B1n_mal_alan_(film,_1945)",
     poster: "posters/arsin-mal-alan-1945.jpg",
     trailerYoutubeId: "zSmQEsFFY8M",
-    backdrop: "backdrops/arsin-mal-alan-1945.jpg",
+    backdrop: "backdrops/arsin-mal-alan-1945.webp",
     imageSource: ["https://en.wikipedia.org/wiki/File:The_Cloth_Peddler_(1945_film).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     featured: true
   },
@@ -44,7 +45,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/G%C3%B6r%C3%BC%C5%9F_(film,_1955)",
     poster: "posters/gorus-1955.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/gorus-1955.jpg",
+    backdrop: "backdrops/gorus-1955.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92%D1%81%D1%82%D1%80%D0%B5%D1%87%D0%B01955.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -56,7 +57,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/O_olmas%C4%B1n,_bu_olsun_(film)",
     poster: "posters/o-olmasin-bu-olsun-1956.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/o-olmasin-bu-olsun-1956.jpg",
+    backdrop: "backdrops/o-olmasin-bu-olsun-1956.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B5_%D1%82%D0%B0,_%D1%82%D0%B0%D0%BA_%D1%8D%D1%82%D0%B0_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -80,7 +81,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Uzaq_sahill%C9%99rd%C9%99",
     poster: "posters/uzaq-sahillerde-1958.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/uzaq-sahillerde-1958.jpg",
+    backdrop: "backdrops/uzaq-sahillerde-1958.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B0_%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D0%B8%D1%85_%D0%B1%D0%B5%D1%80%D0%B5%D0%B3%D0%B0%D1%85.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     featured: true
   },
@@ -93,7 +94,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/%C3%96gey_ana_(film,_1958)",
     poster: "posters/ogey-ana-1958.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/ogey-ana-1958.jpg",
+    backdrop: "backdrops/ogey-ana-1958.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D0%B0%D1%87%D0%B5%D1%85%D0%B0_1958_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -105,7 +106,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Koro%C4%9Flu_(film,_1960)",
     poster: "posters/koroglu-1960.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/koroglu-1960.jpg",
+    backdrop: "backdrops/koroglu-1960.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D1%91%D1%80-%D0%BE%D0%B3%D0%BB%D1%8B_(%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -115,9 +116,9 @@ const FILMS = [
     genre: "Musiqili komediya",
     description: "Valideynlərinin onu xəbəri olmadan evləndirmək qərarına qəzəblənən Əhməd evdən çıxıb gedir. Yolda eyni taleyi yaşayan və oxumaq üçün şəhərə gələn Leyla ilə təsadüfən rastlaşır və gənclər bir-birini sevir.",
     source: "https://az.wikipedia.org/wiki/%C6%8Fhm%C9%99d_haradad%C4%B1r%3F",
-    poster: "",
+    poster: "posters/ehmed-haradadir-1963.jpg",
     trailerYoutubeId: "dd5uk5pJ8Z8",
-    backdrop: "backdrops/ehmed-haradadir-1963.jpg",
+    backdrop: "backdrops/ehmed-haradadir-1963.webp",
     imageSource: "https://www.youtube.com/watch?v=dd5uk5pJ8Z8"
   },
   {
@@ -129,7 +130,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Ulduz_(film,_1964)",
     poster: "posters/ulduz-1964.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/ulduz-1964.jpg",
+    backdrop: "backdrops/ulduz-1964.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D1%8E%D0%B1%D0%BE%D0%B2%D1%8C_%D0%B8_%D0%BB%D0%B8%D0%BC%D0%B0%D0%BD%D0%B4%D1%80%D1%8B.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -141,7 +142,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Bizim_C%C9%99bi%C5%9F_m%C3%BC%C9%99llim",
     poster: "posters/bizim-cebis-muellim-1969.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/bizim-cebis-muellim-1969.jpg",
+    backdrop: "backdrops/bizim-cebis-muellim-1969.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%AF_%D0%BF%D0%BE%D0%BC%D0%BD%D1%8E_%D1%82%D0%B5%D0%B1%D1%8F,_%D1%83%D1%87%D0%B8%D1%82%D0%B5%D0%BB%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -153,7 +154,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Yeddi_o%C4%9Ful_ist%C9%99r%C9%99m%E2%80%A6",
     poster: "posters/yeddi-ogul-isterem-1970.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/yeddi-ogul-isterem-1970.jpg",
+    backdrop: "backdrops/yeddi-ogul-isterem-1970.webp",
     imageSource: ["https://az.wikipedia.org/wiki/Fayl:Yeddi_o%C4%9Ful_ist%C9%99r%C9%99m..._(film,_1970).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -165,7 +166,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Ax%C4%B1r%C4%B1nc%C4%B1_a%C5%9F%C4%B1r%C4%B1m",
     poster: "posters/axirinci-asirim-1971.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/axirinci-asirim-1971.jpg",
+    backdrop: "backdrops/axirinci-asirim-1971.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B9_%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%B0%D0%BB_%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -177,7 +178,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/N%C9%99simi_(film)",
     poster: "posters/nesimi-1973.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/nesimi-1973.jpg",
+    backdrop: "backdrops/nesimi-1973.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B0%D1%81%D0%B8%D0%BC%D0%B8.JPG", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -189,8 +190,8 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Qat%C4%B1r_M%C9%99mm%C9%99d_(film)",
     poster: "posters/qatir-memmed-1974.jpg",
     trailerYoutubeId: "1Y9kA5o7-fk",
-    backdrop: "backdrops/qatir-memmed-1974.jpg",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D1%81%D1%82%D0%B8%D1%82%D0%B5%D0%BB%D1%8C_%D0%B8%D0%B7_%D0%93%D1%8F%D0%BD%D0%B4%D0%B6%D0%B0%D0%B1%D0%B0%D1%81%D0%B0%D1%80%D0%B0.png", "https://www.youtube.com/watch?v=1Y9kA5o7-fk"]
+    backdrop: "backdrops/qatir-memmed-1974.webp",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D1%81%D1%82%D0%B8%D1%82%D0%B5%D0%BB%D1%8C_%D0%B8%D0%B7_%D0%93%D1%8F%D0%BD%D0%B4%D0%B6%D0%B0%D0%B1%D0%B0%D1%81%D0%B0%D1%80%D0%B0.png", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
     id: "dede-qorqud-1975",
@@ -201,7 +202,7 @@ const FILMS = [
     source: "https://en.wikipedia.org/wiki/Dada_Gorgud",
     poster: "posters/dede-qorqud-1975.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/dede-qorqud-1975.jpg",
+    backdrop: "backdrops/dede-qorqud-1975.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D1%82_%D0%BF%D0%BE%D0%B3%D0%B0%D1%81%D1%88%D0%B8%D1%85_%D0%BA%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B2.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -213,8 +214,8 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/D%C9%99rvi%C5%9F_Parisi_partlad%C4%B1r",
     poster: "posters/dervis-parisi-partladir-1976.jpg",
     trailerYoutubeId: "Gcwvqt85pI8",
-    backdrop: "backdrops/dervis-parisi-partladir-1976.jpg",
-    imageSource: ["https://en.wikipedia.org/wiki/File:The_Darvish_Detonates_Paris.jpg", "https://www.youtube.com/watch?v=Gcwvqt85pI8"]
+    backdrop: "backdrops/dervis-parisi-partladir-1976.webp",
+    imageSource: ["https://en.wikipedia.org/wiki/File:The_Darvish_Detonates_Paris.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
     id: "ad-gunu-1977",
@@ -225,7 +226,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Ad_g%C3%BCn%C3%BC_(film,_1977)",
     poster: "posters/ad-gunu-1977.jpg",
     trailerYoutubeId: "EYlGTRl9aVM",
-    backdrop: "backdrops/ad-gunu-1977.jpg",
+    backdrop: "backdrops/ad-gunu-1977.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:Den_rozhdeniya.jpg", "https://www.youtube.com/watch?v=EYlGTRl9aVM"]
   },
   {
@@ -237,7 +238,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Qaynana_(film)",
     poster: "posters/qaynana-1978.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/qaynana-1978.jpg",
+    backdrop: "backdrops/qaynana-1978.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D0%BA%D1%80%D0%BE%D0%B2%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -249,7 +250,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Bab%C9%99k_(film)",
     poster: "posters/babek-1979.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/babek-1979.jpg",
+    backdrop: "backdrops/babek-1979.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%91%D0%B0%D0%B1%D0%B5%D0%BA.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     featured: true
   },
@@ -262,7 +263,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/B%C9%99yin_o%C4%9Furlanmas%C4%B1",
     poster: "posters/beyin-ogurlanmasi-1985.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/beyin-ogurlanmasi-1985.jpg",
+    backdrop: "backdrops/beyin-ogurlanmasi-1985.webp",
     imageSource: ["https://az.wikipedia.org/wiki/Fayl:B%C9%99yin_o%C4%9Furlanmas%C4%B1_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -274,7 +275,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/F%C9%99ryad_(film,_1993)",
     poster: "posters/feryad-1993.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/feryad-1993.jpg",
+    backdrop: "backdrops/feryad-1993.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%9A%D1%80%D0%B8%D0%BA.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -286,8 +287,8 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Yarasa_(film,_1995)",
     poster: "posters/yarasa-1995.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/yarasa-1995.jpg",
-    imageSource: ["https://commons.wikimedia.org/wiki/File:Yarasa,_1995.png", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    backdrop: "backdrops/yarasa-1995.webp",
+    imageSource: ["https://commons.wikimedia.org/wiki/File:Yarasa,_1995.png", "https://www.youtube.com/@azrbaycandovltfilmfondu3339"]
   },
   {
     id: "sari-gelin-1998",
@@ -298,7 +299,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Sar%C4%B1_g%C9%99lin_(film,_1998)",
     poster: "",
     trailerYoutubeId: "",
-    backdrop: "backdrops/sari-gelin-1998.jpg",
+    backdrop: "backdrops/sari-gelin-1998.webp",
     imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio"
   },
   {
@@ -310,20 +311,20 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Cavid_%C3%B6mr%C3%BC",
     poster: "posters/cavid-omru-2007.jpg",
     trailerYoutubeId: "",
-    backdrop: "",
-    imageSource: "https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%96%D0%B8%D0%B7%D0%BD%D1%8C_%D0%94%D0%B6%D0%B0%D0%B2%D0%B8%D0%B4%D0%B0.jpg"
+    backdrop: "backdrops/cavid-omru-2007.webp",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%96%D0%B8%D0%B7%D0%BD%D1%8C_%D0%94%D0%B6%D0%B0%D0%B2%D0%B8%D0%B4%D0%B0.jpg", "https://www.youtube.com/watch?v=vtAhu0AOoLc"]
   },
   {
-    id: "40-ci-qapi-2008",
+    id: "40-ci-qapi-2009",
     title: "40-cı qapı",
-    year: 2008,
+    year: 2009,
     genre: "Dram",
     description: "Hadisələr 1990-cı illərin əvvəlində Bakı ətrafındakı qəsəbədə baş verir. Atası Rusiyada vəfat edən 14 yaşlı oğlan anasını dolandırmaq üçün təhsilini atıb işləmək məcburiyyətində qalır.",
     source: "https://az.wikipedia.org/wiki/40-c%C4%B1_qap%C4%B1_(film,_2009)",
-    poster: "posters/40-ci-qapi-2008.jpg",
+    poster: "posters/40-ci-qapi-2009.jpg",
     trailerYoutubeId: "",
-    backdrop: "",
-    imageSource: "https://az.wikipedia.org/wiki/Fayl:40-c%C4%B1_qap%C4%B1_(film,_2008).jpg"
+    backdrop: "backdrops/40-ci-qapi-2009.webp",
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:40-c%C4%B1_qap%C4%B1_(film,_2008).jpg", "https://www.youtube.com/watch?v=RCBvqoi_AxE"]
   },
   {
     id: "buta-2011",
@@ -334,7 +335,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Buta_(film)",
     poster: "posters/buta-2011.jpg",
     trailerYoutubeId: "NoW553Ft3H0",
-    backdrop: "backdrops/buta-2011.jpg",
+    backdrop: "backdrops/buta-2011.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%91%D1%83%D1%82%D0%B0.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
@@ -346,8 +347,8 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Dolu_(film,_2012)",
     poster: "posters/dolu-2012.jpg",
     trailerYoutubeId: "8yDd5-0Xjvk",
-    backdrop: "backdrops/dolu-2012.jpg",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:Dolu_(film,_2012).jpg", "https://www.youtube.com/watch?v=8yDd5-0Xjvk"]
+    backdrop: "backdrops/dolu-2012.webp",
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:Dolu_(film,_2012).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
   },
   {
     id: "subhun-sefiri-2012",
@@ -358,7 +359,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/S%C3%BCbh%C3%BCn_s%C9%99firi",
     poster: "posters/subhun-sefiri-2012.jpg",
     trailerYoutubeId: "pZKnOF7sP2c",
-    backdrop: "backdrops/subhun-sefiri-2012.jpg",
+    backdrop: "backdrops/subhun-sefiri-2012.webp",
     imageSource: ["https://az.wikipedia.org/wiki/Fayl:S%C3%BCbh%C3%BCn_s%C9%99firi_(film,_2012).jpg", "https://www.youtube.com/watch?v=pZKnOF7sP2c"]
   },
   {
@@ -370,8 +371,8 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/%C3%87%C3%B6l%C3%A7%C3%BC_(film)",
     poster: "posters/colcu-2012.jpg",
     trailerYoutubeId: "nqGYlDOjCIY",
-    backdrop: "backdrops/colcu-2012.jpg",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:%C3%87%C3%B6l%C3%A7%C3%BC_(film,_2012).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    backdrop: "backdrops/colcu-2012.webp",
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:%C3%87%C3%B6l%C3%A7%C3%BC_(film,_2012).jpg", "https://www.youtube.com/watch?v=nqGYlDOjCIY"]
   },
   {
     id: "xoca-2012",
@@ -392,9 +393,9 @@ const FILMS = [
     genre: "Dram",
     description: "Qarabağ müharibəsi şiddətlənərkən Nabat xəstə əri ilə kənddən uzaq, tənha bir evdə yaşayır; onların oğlu döyüşdə həlak olub. Kənd tədricən boşalır, əri vəfat edəndən sonra isə Nabat tamamilə tək qalır.",
     source: "https://en.wikipedia.org/wiki/Nabat_(film)",
-    poster: "",
+    poster: "posters/nabat-2014.jpg",
     trailerYoutubeId: "",
-    backdrop: "backdrops/nabat-2014.jpg",
+    backdrop: "backdrops/nabat-2014.webp",
     imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
     featured: true
   },
@@ -407,7 +408,7 @@ const FILMS = [
     source: "https://en.wikipedia.org/wiki/Pomegranate_Orchard",
     poster: "posters/nar-bagi-2017.jpg",
     trailerYoutubeId: "r9mujDmn9SU",
-    backdrop: "backdrops/nar-bagi-2017.jpg",
+    backdrop: "backdrops/nar-bagi-2017.webp",
     imageSource: ["https://en.wikipedia.org/wiki/File:Pomegranate_Orchard.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     featured: true
   },
@@ -420,7 +421,7 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/S%C9%99p%C9%99l%C9%99nmi%C5%9F_%C3%B6l%C3%BCml%C9%99r_aras%C4%B1nda",
     poster: "posters/sepelenmis-olumler-arasinda-2020.jpg",
     trailerYoutubeId: "jGLsh2vBo3I",
-    backdrop: "backdrops/sepelenmis-olumler-arasinda-2020.jpg",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:S%C9%99p%C9%99l%C9%99nmi%C5%9F_%C3%B6l%C3%BCml%C9%99r_aras%C4%B1nda_(film,_2020).jpg", "https://www.youtube.com/watch?v=jGLsh2vBo3I"]
+    backdrop: "",
+    imageSource: "https://az.wikipedia.org/wiki/Fayl:S%C9%99p%C9%99l%C9%99nmi%C5%9F_%C3%B6l%C3%BCml%C9%99r_aras%C4%B1nda_(film,_2020).jpg"
   }
 ];

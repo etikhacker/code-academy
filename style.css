@@ -359,9 +359,17 @@ ul { margin: 0; padding: 0; list-style: none; }
   object-position: center 30%;
 }
 /* kadr yoxdursa: posterin bulanıq, qaranlıq versiyası */
-.hero__bg--blur img {
-  filter: blur(36px) brightness(0.42) saturate(1.2);
-  transform: scale(1.18);
+.hero__bg img { opacity: 0; transition: opacity 0.6s ease; }
+.hero__bg img.is-ready { opacity: 1; }
+/* kiçik kadr və ya kadr yoxdursa: posterin güclü bulanıq, qaranlıq "ambient" fonu */
+.hero__bg--ambient img {
+  filter: blur(40px) brightness(0.45) saturate(1.35);
+  transform: scale(1.25);
+}
+.hero__bg--ambient::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(80% 90% at 75% 40%, rgba(255, 255, 255, 0.06), transparent 60%);
 }
 .hero__bg--art {
   background:
@@ -387,8 +395,9 @@ ul { margin: 0; padding: 0; list-style: none; }
   position: absolute; inset: 0;
   z-index: -1;
   background:
-    linear-gradient(to top, var(--bg) 0%, rgba(11, 11, 15, 0.75) 18%, rgba(11, 11, 15, 0.15) 50%, rgba(11, 11, 15, 0.35) 100%),
-    linear-gradient(to right, rgba(11, 11, 15, 0.95) 0%, rgba(11, 11, 15, 0.7) 35%, rgba(11, 11, 15, 0.2) 65%, rgba(11, 11, 15, 0.05) 100%);
+    linear-gradient(to top, var(--bg) 0%, rgba(11, 11, 15, 0.7) 14%, rgba(11, 11, 15, 0) 42%),
+    linear-gradient(to bottom, rgba(11, 11, 15, 0.55) 0%, rgba(11, 11, 15, 0) 22%),
+    linear-gradient(90deg, rgba(11, 11, 15, 0.94) 0%, rgba(11, 11, 15, 0.78) 28%, rgba(11, 11, 15, 0.35) 55%, rgba(11, 11, 15, 0) 80%);
 }
 .hero__inner {
   width: 100%;
@@ -483,10 +492,35 @@ ul { margin: 0; padding: 0; list-style: none; }
 .hero__dot-fill { background: #fff; transform: scaleX(0); transform-origin: left center; }
 .hero__dot.is-active .hero__dot-fill { animation: dotFill 7s linear forwards; }
 /* üzərinə gələndə, fokusda, modal açıq olanda və tab gizlənəndə dayansın */
-.hero:hover .hero__dot-fill,
-.hero:focus-within .hero__dot-fill,
 .hero.is-paused .hero__dot-fill { animation-play-state: paused; }
 @keyframes dotFill { to { transform: scaleX(1); } }
+
+/* sol/sağ oxlar — nöqtələrlə eyni sətirdə, sağda (mətnin üstünə düşmür) */
+.hero__arrow {
+  position: absolute;
+  z-index: 4;
+  bottom: 16px;
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(11, 11, 15, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s var(--ease-out), opacity 0.2s;
+}
+.hero__arrow:hover { transform: scale(1.08); }
+.hero__arrow svg { width: 24px; height: 24px; }
+.hero__arrow--next { right: var(--gutter); }
+.hero__arrow--prev { right: calc(var(--gutter) + 54px); }
+@media (max-width: 719.98px) {
+  .hero__arrow { width: 38px; height: 38px; bottom: 12px; }
+  .hero__arrow svg { width: 20px; height: 20px; }
+  .hero__arrow--prev { right: calc(var(--gutter) + 46px); }
+}
+
 
 @media (max-width: 719.98px) {
   .hero__slides { min-height: max(520px, 70svh); }
@@ -1180,6 +1214,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   }
   .hero__slide.is-active .hero__bg { animation: none !important; }
   .hero__dot.is-active .hero__dot-fill { animation: none !important; transform: scaleX(1); }
+  .hero__slide, .hero__slide.is-active, .hero__bg img { transition: none !important; }
   .stat { opacity: 1; }
   .poster.is-loading::before,
   .modal__banner.is-loading::before { animation: none !important; transform: none; }
