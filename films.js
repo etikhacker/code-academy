@@ -41,6 +41,18 @@ const FILMS = [
     inCinemas: true
   },
   {
+    id: "mubariz-2023",
+    title: "Mübariz",
+    year: 2023,
+    genre: "Müharibə",
+    description: "Film Milli Qəhrəman Mübariz İbrahimovun beş yaşından şəhid olduğu günə qədərki həyat yolunu izləyir. Rejissor Natiq Novruzovun çəkdiyi doxsan dəqiqəlik film 2023-cü ilin aprelində kinoteatrlarda nümayişə çıxıb.",
+    source: "https://www.au.edu.az/en/news/azerbaycan_universitetinde_mubariz_bedii_filmi_numayis_olunub",
+    poster: "posters/mubariz-2023.webp",
+    trailerYoutubeId: "AcwHtwx-1ZA",
+    backdrop: "backdrops/mubariz-2023.webp",
+    imageSource: "https://www.youtube.com/watch?v=AcwHtwx-1ZA"
+  },
+  {
     id: "arsin-mal-alan-1945",
     title: "Arşın mal alan",
     year: 1945,
@@ -51,7 +63,6 @@ const FILMS = [
     trailerYoutubeId: "zSmQEsFFY8M",
     backdrop: "backdrops/arsin-mal-alan-1945.webp",
     imageSource: ["https://en.wikipedia.org/wiki/File:The_Cloth_Peddler_(1945_film).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    featured: true,
     watch: { url: "https://www.youtube.com/watch?v=XPh7XwqBFsc", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -62,7 +73,7 @@ const FILMS = [
     description: "Film bir-biri ilə yarışan azərbaycanlı və özbək pambıqçılarının dostluğundan danışır. Tənbəl və qayğısız Kamil qabaqcıl pambıqçı Lalaya vurulur və bu sevgi onu zəhmətkeş insana çevirir.",
     source: "https://az.wikipedia.org/wiki/G%C3%B6r%C3%BC%C5%9F_(film,_1955)",
     poster: "posters/gorus-1955.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "7dkIAg4xd4A",
     backdrop: "backdrops/gorus-1955.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92%D1%81%D1%82%D1%80%D0%B5%D1%87%D0%B01955.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=yfPWDxvogXY", label: "Azərbaycanfilm — YouTube" }
@@ -75,7 +86,7 @@ const FILMS = [
     description: "Hadisələr 1910-cu ildə Bakıda baş verir: gənc Sərvər və Gülnazın sevgisi pul, cəhalət və köhnə adətlərlə üz-üzə gəlir. Üzeyir Hacıbəyovun eyniadlı operettası əsasında çəkilən filmdə tacirlər, qoçular və alverçilər gülüş hədəfinə çevrilir.",
     source: "https://az.wikipedia.org/wiki/O_olmas%C4%B1n,_bu_olsun_(film)",
     poster: "posters/o-olmasin-bu-olsun-1956.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "GHRcMRlzYhw",
     backdrop: "backdrops/o-olmasin-bu-olsun-1956.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B5_%D1%82%D0%B0,_%D1%82%D0%B0%D0%BA_%D1%8D%D1%82%D0%B0_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=mZTbGUGk7Rc", label: "Azərbaycanfilm — YouTube" }
@@ -101,10 +112,9 @@ const FILMS = [
     description: "Film İkinci Dünya müharibəsində İtaliya və Yuqoslaviyada faşistlərə qarşı vuruşan Sovet İttifaqı Qəhrəmanı Mehdi Hüseynzadəyə həsr olunub. \"Mixaylo\" ləqəbli partizan alman zabiti qiyafəsində düşmən arxasında cəsarətli əməliyyatlar keçirir.",
     source: "https://az.wikipedia.org/wiki/Uzaq_sahill%C9%99rd%C9%99",
     poster: "posters/uzaq-sahillerde-1958.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "PUZMk5unzy4",
     backdrop: "backdrops/uzaq-sahillerde-1958.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B0_%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D0%B8%D1%85_%D0%B1%D0%B5%D1%80%D0%B5%D0%B3%D0%B0%D1%85.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    featured: true,
     watch: { url: "https://www.youtube.com/watch?v=yOIpgYGqa7g", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -115,7 +125,7 @@ const FILMS = [
     description: "Həkim Dilara ailə qurduğu kənddə ögey oğlu balaca İsmayılın sevgisini qazanmağa çalışır. Uşaq onu ana kimi qəbul etmək istəmir, lakin birlikdə keçdikləri çətin sınaq onları bir-birinə yaxınlaşdırır.",
     source: "https://az.wikipedia.org/wiki/%C3%96gey_ana_(film,_1958)",
     poster: "posters/ogey-ana-1958.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "dFhcNxEWERs",
     backdrop: "backdrops/ogey-ana-1958.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D0%B0%D1%87%D0%B5%D1%85%D0%B0_1958_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=Js9RX9k5VnI", label: "Azərbaycanfilm — YouTube" }
@@ -154,7 +164,7 @@ const FILMS = [
     description: "Kinokomediya iki gəncin təmiz sevgisini və kənddə elmə arxa çevirən vəzifəpərəstlərə qarşı mübarizəni gülüşlə anladır. Film bəstəkar Süleyman Ələsgərovun eyniadlı operettasının motivləri əsasında çəkilib.",
     source: "https://az.wikipedia.org/wiki/Ulduz_(film,_1964)",
     poster: "posters/ulduz-1964.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "1649G3lUjnk",
     backdrop: "backdrops/ulduz-1964.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D1%8E%D0%B1%D0%BE%D0%B2%D1%8C_%D0%B8_%D0%BB%D0%B8%D0%BC%D0%B0%D0%BD%D0%B4%D1%80%D1%8B.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=5Ey7IYtSoCM", label: "Azərbaycanfilm — YouTube" }
@@ -167,7 +177,7 @@ const FILMS = [
     description: "Hadisələr İkinci Dünya müharibəsi illərində Bakıda cərəyan edir və mərkəzdə məktəb müəllimi Cəbiş dayanır. Film ağır dövrdə ailəsini halal zəhmətlə dolandıran sadə insanların mənəvi gücündən bəhs edir.",
     source: "https://az.wikipedia.org/wiki/Bizim_C%C9%99bi%C5%9F_m%C3%BC%C9%99llim",
     poster: "posters/bizim-cebis-muellim-1969.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "3i5j5eER5CY",
     backdrop: "backdrops/bizim-cebis-muellim-1969.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%AF_%D0%BF%D0%BE%D0%BC%D0%BD%D1%8E_%D1%82%D0%B5%D0%B1%D1%8F,_%D1%83%D1%87%D0%B8%D1%82%D0%B5%D0%BB%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=br9zD5f-c4A", label: "Azərbaycanfilm — YouTube" }
@@ -180,10 +190,11 @@ const FILMS = [
     description: "Film 1920-ci illərdə inandıqları ideya uğrunda canından keçməyə hazır olan gənc komsomolçular haqqında romantik hekayədir. Ssenari Səməd Vurğunun \"Komsomol poeması\"nın motivləri əsasında yazılıb.",
     source: "https://az.wikipedia.org/wiki/Yeddi_o%C4%9Ful_ist%C9%99r%C9%99m%E2%80%A6",
     poster: "posters/yeddi-ogul-isterem-1970.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "Ao_VlrwOKM0",
     backdrop: "backdrops/yeddi-ogul-isterem-1970.webp",
     imageSource: ["https://az.wikipedia.org/wiki/Fayl:Yeddi_o%C4%9Ful_ist%C9%99r%C9%99m..._(film,_1970).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    watch: { url: "https://www.youtube.com/watch?v=NI9D6hvuOGE", label: "Azərbaycanfilm — YouTube" }
+    watch: { url: "https://www.youtube.com/watch?v=NI9D6hvuOGE", label: "Azərbaycanfilm — YouTube" },
+    featured: true
   },
   {
     id: "axirinci-asirim-1971",
@@ -193,7 +204,7 @@ const FILMS = [
     description: "Hadisələr sovet hakimiyyətinin ilk illərində Azərbaycanın dağ kəndlərinin birində baş verir. Taxılının əlindən alınmasına etiraz edən Kərbəlayı İsmayılla yeni kolxoz sədri İman arasındakı qarşıdurma filmin əsas xəttidir.",
     source: "https://az.wikipedia.org/wiki/Ax%C4%B1r%C4%B1nc%C4%B1_a%C5%9F%C4%B1r%C4%B1m",
     poster: "posters/axirinci-asirim-1971.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "pcJYeBLRtHU",
     backdrop: "backdrops/axirinci-asirim-1971.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B9_%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%B0%D0%BB_%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=2ZX5ssKQwqw", label: "Azərbaycanfilm — YouTube" }
@@ -206,7 +217,7 @@ const FILMS = [
     description: "Film böyük Azərbaycan şairi və filosofu İmadəddin Nəsiminin həyatından bəhs edir və onun anadan olmasının 600 illiyinə həsr olunub. Baş rolu ifa edən Rasim Balayev üçün bu, kinoda ilk böyük iş olub.",
     source: "https://az.wikipedia.org/wiki/N%C9%99simi_(film)",
     poster: "posters/nesimi-1973.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "nvRgm3sYFLc",
     backdrop: "backdrops/nesimi-1973.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B0%D1%81%D0%B8%D0%BC%D0%B8.JPG", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=U1csklsXuAs", label: "Azərbaycanfilm — YouTube" }
@@ -232,10 +243,11 @@ const FILMS = [
     description: "İki seriyalı film \"Kitabi-Dədə Qorqud\" oğuz dastanı əsasında çəkilib. Saysız müharibələrin şahidi olan müdrik qoca Dədə Qorqud insanları torpağı qorumağa və onu əkib-becərməyə çağırır.",
     source: "https://en.wikipedia.org/wiki/Dada_Gorgud",
     poster: "posters/dede-qorqud-1975.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "71KByImT7D4",
     backdrop: "backdrops/dede-qorqud-1975.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D1%82_%D0%BF%D0%BE%D0%B3%D0%B0%D1%81%D1%88%D0%B8%D1%85_%D0%BA%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B2.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    watch: { url: "https://www.youtube.com/watch?v=x7GxpWC20Cc", label: "Azərbaycanfilm — YouTube" }
+    watch: { url: "https://www.youtube.com/watch?v=x7GxpWC20Cc", label: "Azərbaycanfilm — YouTube" },
+    featured: true
   },
   {
     id: "dervis-parisi-partladir-1976",
@@ -271,7 +283,7 @@ const FILMS = [
     description: "Gənc bəstəkar Ayazın anası Cənnət xanımla iki gəlini arasında bitməyən dedi-qodular ailədə münaqişələri getdikcə kəskinləşdirir. Məcid Şamxalovun pyesi əsasında çəkilən film köhnə adətlərin zərərini gülüşlə göstərir.",
     source: "https://az.wikipedia.org/wiki/Qaynana_(film)",
     poster: "posters/qaynana-1978.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "E8Z7p2793Uk",
     backdrop: "backdrops/qaynana-1978.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D0%BA%D1%80%D0%BE%D0%B2%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=JFGKyPqQuwA", label: "Azərbaycanfilm — YouTube" }
@@ -284,7 +296,7 @@ const FILMS = [
     description: "Film Abbasilər xilafətinə qarşı iyirmi ildən artıq davam edən üsyanın başçısı Babəkin həyat və mübarizəsindən bəhs edir. \"Mosfilm\" və \"Azərbaycanfilm\"in birgə istehsalı olan bu lent Azərbaycan SSR-in ən bahalı filmi olub.",
     source: "https://az.wikipedia.org/wiki/Bab%C9%99k_(film)",
     poster: "posters/babek-1979.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "l1aWGS-MEjQ",
     backdrop: "backdrops/babek-1979.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%91%D0%B0%D0%B1%D0%B5%D0%BA.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     featured: true,
@@ -298,7 +310,7 @@ const FILMS = [
     description: "Kəndə toy səhnəsi çəkməyə gələn kino qrupunun rejissoru ssenarinin həyatdan uzaq olduğunu görür və kənddəki əsl toyu lentə almağa başlayır. Film bu iki süjet xəttini birləşdirərək kənd həyatının adət-ənənələrini zarafatla göstərir.",
     source: "https://az.wikipedia.org/wiki/B%C9%99yin_o%C4%9Furlanmas%C4%B1",
     poster: "posters/beyin-ogurlanmasi-1985.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "fAFtxxHO4zQ",
     backdrop: "backdrops/beyin-ogurlanmasi-1985.webp",
     imageSource: ["https://az.wikipedia.org/wiki/Fayl:B%C9%99yin_o%C4%9Furlanmas%C4%B1_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=2auKCopLedM", label: "Azərbaycanfilm — YouTube" }
@@ -311,7 +323,7 @@ const FILMS = [
     description: "\"Ögey ana\" filmindəki balaca İsmayıl artıq böyüyüb və Qarabağ müharibəsində batalyon komandiridir. Döyüşdə əsir düşən qəhrəmanın hekayəsi real hadisələrə və bir əsgərin yaşadıqlarına əsaslanır.",
     source: "https://az.wikipedia.org/wiki/F%C9%99ryad_(film,_1993)",
     poster: "posters/feryad-1993.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "pYicUxqPnjc",
     backdrop: "backdrops/feryad-1993.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%9A%D1%80%D0%B8%D0%BA.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=P0jcgIcdvpo", label: "Azərbaycanfilm — YouTube" }
@@ -361,7 +373,7 @@ const FILMS = [
     description: "Hadisələr 1990-cı illərin əvvəlində Bakı ətrafındakı qəsəbədə baş verir. Atası Rusiyada vəfat edən 14 yaşlı oğlan anasını dolandırmaq üçün təhsilini atıb işləmək məcburiyyətində qalır.",
     source: "https://az.wikipedia.org/wiki/40-c%C4%B1_qap%C4%B1_(film,_2009)",
     poster: "posters/40-ci-qapi-2009.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "RCBvqoi_AxE",
     backdrop: "backdrops/40-ci-qapi-2009.webp",
     imageSource: ["https://az.wikipedia.org/wiki/Fayl:40-c%C4%B1_qap%C4%B1_(film,_2008).jpg", "https://www.youtube.com/watch?v=RCBvqoi_AxE"]
   },
@@ -425,9 +437,9 @@ const FILMS = [
     description: "Real faktlar əsasında çəkilən filmdə hadisələr Bakıda və Xocalıda paralel inkişaf edir. Filmin həm rejissoru, həm də ssenari müəllifi Vahid Mustafayevdir.",
     source: "https://az.wikipedia.org/wiki/Xoca_(film,_2012)",
     poster: "posters/xoca-2012.webp",
-    trailerYoutubeId: "",
-    backdrop: "",
-    imageSource: "https://az.wikipedia.org/wiki/Fayl:Xoca_(film,_2012).jpg"
+    trailerYoutubeId: "ttDL_sP7rdU",
+    backdrop: "backdrops/xoca-2012.webp",
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:Xoca_(film,_2012).jpg", "https://www.youtube.com/watch?v=ttDL_sP7rdU"]
   },
   {
     id: "nabat-2014",
@@ -437,7 +449,7 @@ const FILMS = [
     description: "Qarabağ müharibəsi şiddətlənərkən Nabat xəstə əri ilə kənddən uzaq, tənha bir evdə yaşayır; onların oğlu döyüşdə həlak olub. Kənd tədricən boşalır, əri vəfat edəndən sonra isə Nabat tamamilə tək qalır.",
     source: "https://en.wikipedia.org/wiki/Nabat_(film)",
     poster: "posters/nabat-2014.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "AYBQ9TjEeGA",
     backdrop: "backdrops/nabat-2014.webp",
     imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
     featured: true,
@@ -477,7 +489,7 @@ const FILMS = [
     description: "XVIII əsrdə Quba xanı Fətəli xan dağınıq Azərbaycan xanlıqlarını vahid dövlətdə birləşdirməyə çalışır. Film onu daxili çəkişmələr və xarici təhlükələr qarşısında həm uzaqgörən diplomat, həm də qətiyyətli sərkərdə kimi göstərir.",
     source: "https://az.wikipedia.org/wiki/F%C9%99t%C9%99li_xan_(film)",
     poster: "posters/fetali-xan-1947.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "51oAwSMAJaI",
     backdrop: "backdrops/fetali-xan-1947.webp",
     imageSource: ["https://az.wikipedia.org/wiki/Fayl:F%C9%99t%C9%99li_Xan_(1947)(afi%C5%9Fa).JPG", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=8xHIu4-I-1Y", label: "Azərbaycanfilm — YouTube" }
@@ -490,7 +502,7 @@ const FILMS = [
     description: "Gözəl səsi olan gənc Bəxtiyar musiqi təhsili almaq məsləhətinə qulaq asmır və ailəsinin yolu ilə gedib neftçi olur. Pul düşkünü klub müdiri Ağabala isə onun istedadını özü üçün qazanc mənbəyinə çevirməyə çalışır.",
     source: "https://az.wikipedia.org/wiki/B%C9%99xtiyar_(film,_1955)",
     poster: "posters/bextiyar-1955.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "ikuoBFSyqzI",
     backdrop: "backdrops/bextiyar-1955.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%91%D0%B0%D1%85%D1%82%D0%B8%D1%8F%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=_vxgMXuHnwc", label: "Azərbaycanfilm — YouTube" }
@@ -503,7 +515,7 @@ const FILMS = [
     description: "Film-nağılda xalqın torpağını və suyunu əlindən almış qəddar hökmdara qarşı həkim Eldostu, onun şagirdi Mətanət və gənc usta Elşən birlikdə mübarizəyə qalxır. Hekayə xalq birliyinin və elmin şər üzərində qələbəsini göstərir.",
     source: "https://az.wikipedia.org/wiki/Bir_qalan%C4%B1n_sirri",
     poster: "posters/bir-qalanin-sirri-1959.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "KKaXpi-FMgs",
     backdrop: "backdrops/bir-qalanin-sirri-1959.webp",
     imageSource: ["https://commons.wikimedia.org/wiki/File:Das_Geheimnis_der_Festung_Filmplakat.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=Xiq9edTTktY", label: "Azərbaycanfilm — YouTube" }
@@ -515,8 +527,8 @@ const FILMS = [
     genre: "Dram",
     description: "Lirik filmdə həyatda öz yerini axtaran gənc Mehribanın ilk məhəbbəti çətinliklərlə üzləşir. Sevdiyi Zakir onun xəyalındakı insan kimi ola bilmir, amma Mehriban onu özü və insanlara münasibəti barədə düşünməyə vadar edir.",
     source: "https://az.wikipedia.org/wiki/Telefon%C3%A7u_q%C4%B1z_(film)",
-    poster: "",
-    trailerYoutubeId: "",
+    poster: "posters/telefoncu-qiz-1962.webp",
+    trailerYoutubeId: "ZrXcW44ijf8",
     backdrop: "backdrops/telefoncu-qiz-1962.webp",
     imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
     watch: { url: "https://www.youtube.com/watch?v=vABWeekHdjU", label: "Azərbaycanfilm — YouTube" }
@@ -529,7 +541,7 @@ const FILMS = [
     description: "Mirzə İbrahimovun eyniadlı romanı əsasında çəkilən film kənd həyatındakı dəyişikliklərdən və rəhbərlikdə demokratik üsullar uğrunda mübarizədən bəhs edir. Əsas fikir budur ki, rəhbər yalnız xalqa və kollektivə arxalananda məqsədinə çata bilər.",
     source: "https://az.wikipedia.org/wiki/B%C3%B6y%C3%BCk_dayaq_(film)",
     poster: "posters/boyuk-dayaq-1962.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "jTYKLp3zoL8",
     backdrop: "backdrops/boyuk-dayaq-1962.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92%D0%B5%D0%BB%D0%B8%D0%BA%D0%B0%D1%8F_%D0%BE%D0%BF%D0%BE%D1%80%D0%B0_%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=M06c43Bc2-k", label: "Azərbaycanfilm — YouTube" }
@@ -542,7 +554,7 @@ const FILMS = [
     description: "Film İkinci Dünya müharibəsi illərində kənddə yaşayan gənc Səidənin taleyindən danışır. Burada həmyerlilərin bir-birinə dayaq olması və cəbhədə əzizlərini itirən ailələrin dərdinə şərik çıxması göstərilir.",
     source: "https://az.wikipedia.org/wiki/M%C9%99n_ki_g%C3%B6z%C9%99l_deyildim",
     poster: "posters/men-ki-gozel-deyildim-1968.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "FVHeIVVzpQA",
     backdrop: "backdrops/men-ki-gozel-deyildim-1968.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D1%80%D0%B0%D1%81%D0%B0%D0%B2%D0%B8%D1%86%D0%B5%D0%B9_%D0%BD%D0%B5%D0%B1%D1%8B%D0%BB%D0%B0.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=--JkGGPcxeY", label: "Azərbaycanfilm — YouTube" }
@@ -555,7 +567,7 @@ const FILMS = [
     description: "İsmayıl Şıxlının eyniadlı romanı əsasında çəkilən film Azərbaycanda ilk qabaqcıl ziyalıların və pedaqoqların yetişdiyi dövrdən bəhs edir. Hekayədə insanların şüurunda azadlıq duyğusunun necə oyandığı göstərilir.",
     source: "https://az.wikipedia.org/wiki/D%C9%99li_K%C3%BCr_(film)",
     poster: "posters/deli-kur-1969.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "pTZ-piZZxFs",
     backdrop: "backdrops/deli-kur-1969.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D1%83%D1%80%D0%B0_%D0%BD%D0%B5%D1%83%D0%BA%D1%80%D0%BE%D1%82%D0%B8%D0%BC%D0%B0%D1%8F_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=yt-1zuQJ3nA", label: "Azərbaycanfilm — YouTube" }
@@ -568,7 +580,7 @@ const FILMS = [
     description: "Lirik-psixoloji dram kiçik bir cənub şəhərinin sakinlərindən və köhnə adətlərin onların həyatına necə təsir etdiyindən danışır. Film neorealizm üslubunda çəkilmiş ilk Azərbaycan filmi sayılır.",
     source: "https://az.wikipedia.org/wiki/Bir_c%C9%99nub_%C5%9F%C9%99h%C9%99rind%C9%99",
     poster: "posters/bir-cenub-seherinde-1969.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "Ks8Oi3Ysgx0",
     backdrop: "backdrops/bir-cenub-seherinde-1969.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92_%D1%8D%D1%82%D0%BE%D0%BC_%D1%8E%D0%B6%D0%BD%D0%BE%D0%BC_%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%B5.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=DTLxHu9PVhY", label: "Azərbaycanfilm — YouTube" }
@@ -581,7 +593,7 @@ const FILMS = [
     description: "Film Bakıda yaşayan iki gəncin uğursuz məhəbbətindən bəhs edir. Zahirən xoşbəxt görünən Əsmər uşaqlıq sevgisini xatırlasa da, keçmişi geri qaytarmağın mümkün olmadığını anlayır.",
     source: "https://az.wikipedia.org/wiki/G%C3%BCn_ke%C3%A7di_(film,_1971)",
     poster: "posters/gun-kecdi-1971.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "ME_OuOspbAU",
     backdrop: "backdrops/gun-kecdi-1971.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%94%D0%B5%D0%BD%D1%8C_%D0%BF%D1%80%D0%BE%D1%88%D1%91%D0%BB.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=596lOCYdiaA", label: "Azərbaycanfilm — YouTube" }
@@ -594,7 +606,7 @@ const FILMS = [
     description: "Film 1919-cu ildə Azərbaycanın cənubunda, Muğan və Lənkəranda baş verən dramatik hadisələr üzərində qurulub. Ssenarini Əhmədağa Muğanlı yazıb, filmə Şamil Mahmudbəyov quruluş verib.",
     source: "https://az.wikipedia.org/wiki/Od_i%C3%A7ind%C9%99_(film,_1978)",
     poster: "posters/od-icinde-1978.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "AT3jmnuR9Ak",
     backdrop: "backdrops/od-icinde-1978.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9E%D0%B0%D0%B7%D0%B8%D1%81_%D0%B2_%D0%BE%D0%B3%D0%BD%D0%B5.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=klg4QIznODY", label: "Azərbaycanfilm — YouTube" }
@@ -606,8 +618,8 @@ const FILMS = [
     genre: "Komediya",
     description: "Kənddə yaşayan qoca çoban Əziz babanın 160 yaşı olduğu təsadüfən mis qablardakı yazıdan məlum olur. Təntənəli yubiley hazırlanarkən Əziz baba gəncliyini və ilk məhəbbətini xatırlayır.",
     source: "https://az.wikipedia.org/wiki/Babam%C4%B1z%C4%B1n_babas%C4%B1n%C4%B1n_babas%C4%B1",
-    poster: "",
-    trailerYoutubeId: "",
+    poster: "posters/babamizin-babasinin-babasi-1981.webp",
+    trailerYoutubeId: "OyBZexOjqYg",
     backdrop: "backdrops/babamizin-babasinin-babasi-1981.webp",
     imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
     watch: { url: "https://www.youtube.com/watch?v=TGzQ9hRpffA", label: "Azərbaycanfilm — YouTube" }
@@ -620,7 +632,7 @@ const FILMS = [
     description: "Nəşriyyat korrektoru Rüstəm içində cin olan qədim çıraq tapır və cinin sayəsində işləri birdən-birə düzəlir. Sonda isə anlayır ki, möcüzə yaratmaq üçün insan hər şeydən əvvəl öz gücünə inanmalıdır.",
     source: "https://az.wikipedia.org/wiki/Cin_mikrorayonda",
     poster: "posters/cin-mikrorayonda-1985.webp",
-    trailerYoutubeId: "",
+    trailerYoutubeId: "JOu3Ods9OwE",
     backdrop: "backdrops/cin-mikrorayonda-1985.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%94%D0%B6%D0%B8%D0%BD_%D0%B2_%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%80%D0%B0%D0%B9%D0%BE%D0%BD%D0%B5.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=JVQRfwXtcOQ", label: "Azərbaycanfilm — YouTube" }
@@ -638,4 +650,21 @@ const FILMS = [
     imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
     watch: { url: "https://www.youtube.com/watch?v=RLfkKCSOLO0", label: "Azərbaycanfilm — YouTube" }
   }
+];
+
+/*
+ * "Redaksiyanın seçimi" (ana səhifədəki Top 10) — sıra bu massivdən götürülür.
+ * Əvvəlcə müharibə filmləri (ən yenidən köhnəyə), sonra poster və kadrı olan məşhur filmlər.
+ */
+const TOP10 = [
+  "44-2026",
+  "mubariz-2023",
+  "dolu-2012",
+  "xoca-2012",
+  "sari-gelin-1998",
+  "feryad-1993",
+  "uzaq-sahillerde-1958",
+  "babek-1979",
+  "nabat-2014",
+  "nar-bagi-2017"
 ];

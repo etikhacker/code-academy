@@ -27,7 +27,7 @@ Sonra brauzerdə `http://localhost:8000` ünvanını açın.
 
 ## Film əlavə etmək
 
-`films.js` faylında 47 real Azərbaycan filmi var (32-si 1991-ci ildən əvvəl çəkilib). Hər filmin adı, ili və janrı `source` linkindəki mənbədən (əsasən Vikipediya) yoxlanılıb, təsvirlər öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi və ya etibarlı kanallardandır. Şəkillər `posters/` (şaquli poster, ≤600px, WebP) və `backdrops/` (filmdən geniş kadr, WebP) qovluqlarındadır. Eni 1000 px-dən kiçik kadr tam enə dartılmır: arxada onun bulanıq versiyası, ortada orijinal öz ölçüsündə göstərilir.
+`films.js` faylında 48 real Azərbaycan filmi var (32-si 1991-ci ildən əvvəl çəkilib). Hər filmin adı, ili və janrı `source` linkindəki mənbədən (əsasən Vikipediya) yoxlanılıb, təsvirlər öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi və ya etibarlı kanallardandır. Şəkillər `posters/` (şaquli poster, ≤600px, WebP) və `backdrops/` (filmdən geniş kadr, WebP) qovluqlarındadır. Eni 1000 px-dən kiçik kadr tam enə dartılmır: arxada onun bulanıq versiyası, ortada orijinal öz ölçüsündə göstərilir.
 
 > **Şəkillərin hüquqi statusu:** posterlərin demək olar hamısı Vikipediyada "ədalətli istifadə" (fair use) statusunda saxlanılan qeyri-azad şəkillərdir, kadrlar isə "Azərbaycanfilm"in rəsmi YouTube önizləmələrindən və treylerlərindən götürülüb. Onlar burada yalnız tədris məqsədilə, filmi tanıtmaq üçün kiçik ölçüdə istifadə olunur. Sayt ictimai yayımlanacaqsa, hüquq sahiblərinin şərtlərini nəzərə alın.
 
@@ -62,8 +62,8 @@ Yeni film əlavə etmək üçün `FILMS` massivinə bu formada obyekt yazın:
 
 | Ünvan | Səhifə |
 |---|---|
-| `#/` | Ana səhifə: slayder, janr çipləri, "Redaksiyanın seçimi", Azərbaycan kinosu, Siyahım, Klassiklər, janr sıraları, onilliklər |
-| `#/filmler` | Bütün filmlər, sıralama: Ən yeni / Ən köhnə / A–Z |
+| `#/` | Ana səhifə: slayder → janr çipləri → Redaksiyanın seçimi (Top 10) → Azərbaycan kinosu → Klassiklər → Siyahım |
+| `#/filmler` | Bütün filmlər, "Azərbaycan kinosu rəqəmlərdə" bloku, sıralama: Ən yeni / Ən köhnə / A–Z |
 | `#/klassikler` | 1991-ci ildən əvvəl çəkilmiş filmlər |
 | `#/janrlar`, `#/janr/{ad}` | Janr kartları və seçilmiş janrın filmləri |
 | `#/onillikler` | Onilliklər üzrə zaman xətti |
@@ -78,8 +78,8 @@ Bütün bölmələr `films.js`-dən avtomatik yaranır.
 
 - **Hero slayder:** `featured: true` olan filmlər (yoxdursa, ilk 5 film) hər 7 saniyədən bir fade ilə dəyişir (JS taymer). Altda nöqtə göstəriciləri, sağda sol/sağ oxlar var, telefonda barmaqla sürüşdürmək olar. Slayder yalnız brauzer tabı gizli olanda dayanır. Sağda filmin posteri, fonda isə onun bulanıq versiyası görünür. Başlığın altında il, janr və 1991-dən əvvəlki filmlər üçün "Klassik" etiketi var.
 - **Janr çipləri:** hero-nun altındadır, basanda janr filtrini dəyişir (menyudakı janr seçimi ilə sinxrondur).
-- **Sıralar:** Top 10 ("Redaksiyanın seçimi" — `films.js`-dəki ilk 10 film, böyük konturlu rəqəmlərlə), Azərbaycan kinosu, Siyahım, Klassiklər, hər janr üçün ayrıca sıra, Onilliklər üzrə (onillik düymələri ilə).
-- **"Azərbaycan kinosu rəqəmlərdə":** film sayı, janr sayı, ən köhnə və ən yeni filmin ili. Rəqəmlər ekrana girəndə 0-dan sayılır.
+- **Ana səhifənin sıraları:** Redaksiyanın seçimi (Top 10 — sıra `films.js`-dəki `TOP10` massivindən götürülür, böyük konturlu rəqəmlərlə), Azərbaycan kinosu, Klassiklər, Siyahım. Hər sıranın başlığında "Hamısına bax →" linki var.
+- **"Azərbaycan kinosu rəqəmlərdə"** (`#/filmler` səhifəsinin yuxarısında): film sayı, janr sayı, ən köhnə və ən yeni filmin ili, 0-dan sayılaraq artır.
 - **Axtarış:** adın bir hissəsinə görə işləyir, böyük-kiçik hərfə baxmır və Azərbaycan hərflərini düzgün müqayisə edir (`İ/i`, `I/ı`). Axtarış və janr birlikdə bütün sıralara tətbiq olunur. Filtrdən sonra boş qalan janr sıraları gizlənir.
 - **Siyahım:** `localStorage`-da saxlanılır, yəni yalnız bu brauzerdə qalır.
 - **İzləmək üçün keçid:** Azərbaycanfilm-in rəsmi YouTube kanalında olan filmlərin kartında ▶ nişanı, pəncərəsində "▶ İzləmək üçün keçid" düyməsi var (yeni tabda açılır).

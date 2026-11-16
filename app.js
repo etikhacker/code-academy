@@ -159,7 +159,11 @@
     .sort(compareAz);
   const years = films.map((f) => f.year).filter((y) => y !== null);
   const decades = [...new Set(years.map((y) => Math.floor(y / 10) * 10))].sort((a, b) => a - b);
-  const topRank = new Map(films.slice(0, TOP_COUNT).map((f, i) => [f.id, i + 1]));
+  // "Redaksiyanın seçimi": films.js-dəki TOP10 massivi (yoxdursa, ilk 10 film)
+  const topList = ((typeof TOP10 !== 'undefined' && Array.isArray(TOP10)) ? TOP10 : [])
+    .map(String).map((id) => filmById.get(id)).filter(Boolean).slice(0, TOP_COUNT);
+  if (!topList.length) topList.push(...films.slice(0, TOP_COUNT));
+  const topRank = new Map(topList.map((f, i) => [f.id, i + 1]));
 
   /* ---------- Siyahım (localStorage) ---------- */
   const store = {
@@ -376,10 +380,10 @@
       key: 'top',
       more: '#/filmler',
       id: 'top10',
-      title: 'Top 10',
-      note: 'Redaksiyanın seçimi',
+      title: 'Redaksiyanın seçimi',
+      note: 'Top 10',
       ranked: true,
-      source: () => films.slice(0, TOP_COUNT),
+      source: () => topList,
       emptyAll: () => ({ title: 'Hələ film əlavə edilməyib', text: 'Filmləri films.js faylına əlavə etdikdən sonra onlar burada görünəcək.' })
     },
     {
@@ -389,6 +393,15 @@
       title: 'Azərbaycan kinosu',
       source: () => films,
       emptyAll: () => ({ title: 'Hələ film əlavə edilməyib', text: 'Filmləri films.js faylına əlavə etdikdən sonra onlar burada görünəcək.' })
+    },
+    {
+      key: 'classics',
+      more: '#/klassikler',
+      id: 'klassikler',
+      title: 'Klassiklər',
+      note: `${CLASSIC_BEFORE}-ci ilə qədər çəkilmiş filmlər`,
+      source: () => films.filter(isClassic),
+      emptyAll: () => ({ title: 'Bu bölmədə hələ film yoxdur', text: `${CLASSIC_BEFORE}-ci ildən əvvəl çəkilmiş filmlər avtomatik olaraq burada görünür.` })
     },
     {
       key: 'mylist',
@@ -403,35 +416,6 @@
         title: 'Siyahınız hələ boşdur',
         text: 'Film əlavə etmək üçün kartın küncündəki “+” düyməsinə və ya filmin pəncərəsindəki “Siyahıma əlavə et” düyməsinə basın. Əlavə etdiyiniz filmlər burada toplanacaq.'
       })
-    },
-    {
-      key: 'classics',
-      more: '#/klassikler',
-      id: 'klassikler',
-      title: 'Klassiklər',
-      note: `${CLASSIC_BEFORE}-ci ilə qədər çəkilmiş filmlər`,
-      source: () => films.filter(isClassic),
-      emptyAll: () => ({ title: 'Bu bölmədə hələ film yoxdur', text: `${CLASSIC_BEFORE}-ci ildən əvvəl çəkilmiş filmlər avtomatik olaraq burada görünür.` })
-    },
-    { key: 'stats' },
-    ...genres.map((g, i) => ({
-      key: `genre:${g}`,
-      more: `#/janr/${encodeURIComponent(g)}`,
-      id: `janr-${i + 1}`,
-      title: g,
-      kicker: 'Janr',
-      hideWhenFiltered: true, // filtrdən sonra boş qalan janr sırası gizlənir
-      source: () => films.filter((f) => f.genre === g),
-      emptyAll: () => ({ title: 'Film yoxdur' })
-    })),
-    {
-      key: 'decades',
-      more: '#/onillikler',
-      id: 'onilliklar',
-      title: 'Onilliklər üzrə',
-      decades: true,
-      source: () => films.filter((f) => f.year !== null && Math.floor(f.year / 10) * 10 === state.decade),
-      emptyAll: () => ({ title: 'İl məlumatı olan film yoxdur', text: 'films.js-də year sahəsi yazılmış filmlər burada onilliklərə görə qruplaşdırılır.' })
     }
   ];
 
@@ -504,7 +488,7 @@
   }
 
   sectionDefs.forEach((def) => {
-    const sec = def.key === 'stats' ? buildStats() : buildRowSection(def);
+    const sec = buildRowSection(def);
     sections.push(sec);
     sectionByKey[sec.key.startsWith('genre:') ? sec.key : sec.key] = sec;
     els.rows.append(sec.el);
@@ -626,23 +610,18 @@
     requestAnimationFrame(step);
   }
 
-  /* ---------- Scroll ilə görünmə (kartlar stagger, rəqəmlər sayğac) ---------- */
-  const statsEl = sectionByKey.stats.el;
+  /* ---------- Scroll ilə görünmə (kartlar stagger) ---------- */
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add('is-visible');
-        if (entry.target === statsEl) $$('[data-count-to]', statsEl).forEach(countUp);
         io.unobserve(entry.target);
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     rowSections.forEach((s) => io.observe(s.track));
-    io.observe(statsEl);
   } else {
     rowSections.forEach((s) => s.track.classList.add('is-visible'));
-    statsEl.classList.add('is-visible');
-    $$('[data-count-to]', statsEl).forEach((el) => { if (el.dataset.countTo !== '') el.textContent = el.dataset.countTo; });
   }
 
   /* ---------- Hero slayder ---------- */
@@ -1360,7 +1339,7 @@
   const countLabel = (shown, all) => (filtersActive() && shown !== all ? `${shown} / ${all} film` : filmWord(all));
 
   /** Grid səhifəsi: Filmlər, Klassiklər, Siyahım, bir janr. */
-  function gridPage({ key, title, kicker, note, source, sortable = false, emptyAll }) {
+  function gridPage({ key, title, kicker, note, source, sortable = false, emptyAll, stats = false }) {
     let controls = null;
     if (sortable) {
       const sel = h('select', { id: 'sortSelect', 'aria-label': 'Sıralama' },
@@ -1372,7 +1351,12 @@
     const { head, count } = pageHead(title, { kicker, note, controls });
     const grid = h('ul', { class: 'grid', 'aria-labelledby': 'pageTitle' });
     const empty = h('div', { hidden: true });
-    viewPage.replaceChildren(head, grid, empty);
+    const statsBlock = stats ? buildStats().el : null;
+    viewPage.replaceChildren(...[head, statsBlock, grid, empty].filter(Boolean));
+    if (statsBlock) {
+      statsBlock.classList.add('is-visible');
+      $$('[data-count-to]', statsBlock).forEach(countUp);
+    }
     return {
       key,
       update() {
@@ -1460,7 +1444,7 @@
   function buildPage(r) {
     switch (r.name) {
       case 'filmler':
-        return gridPage({ key: 'filmler', title: 'Filmlər', source: () => films, sortable: true,
+        return gridPage({ key: 'filmler', title: 'Filmlər', source: () => films, sortable: true, stats: true,
           emptyAll: () => ({ title: 'Hələ film əlavə edilməyib' }) });
       case 'klassikler':
         return gridPage({ key: 'klassikler', title: 'Klassiklər', note: `${CLASSIC_BEFORE}-ci ilə qədər çəkilmiş filmlər`,

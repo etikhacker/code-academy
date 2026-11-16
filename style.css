@@ -1351,6 +1351,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   .page__sort select { flex: 1 1 auto; min-width: 0; }
 }
 .page__empty { margin-top: 0; }
+.page .stats { margin: 0 0 26px; }
 .row-more {
   margin-left: auto;
   align-self: center;
