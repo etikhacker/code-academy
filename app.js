@@ -193,6 +193,7 @@
 
     refreshListState({ pulseId: adding ? id : null, sourceButton });
     renderSection(sectionByKey.mylist);
+    if (currentPage && currentPage.key === 'siyahim') currentPage.update();
 
     if (!saved) toast('Siyahı bu brauzerdə yadda saxlanıla bilmədi.', 'muted');
     else if (adding) toast(`“${film.title}” siyahıya əlavə edildi`);
@@ -200,7 +201,7 @@
   }
 
   /* ---------- Filtr vəziyyəti ---------- */
-  const state = { query: '', genre: '', decade: decades[0] ?? null };
+  const state = { query: '', genre: '', decade: decades[0] ?? null, sort: 'new' };
 
   const matchesFilters = (film) =>
     (!state.genre || film.genre === state.genre) &&
@@ -373,6 +374,7 @@
   const sectionDefs = [
     {
       key: 'top',
+      more: '#/filmler',
       id: 'top10',
       title: 'Top 10',
       note: 'Redaksiyanın seçimi',
@@ -382,6 +384,7 @@
     },
     {
       key: 'all',
+      more: '#/filmler',
       id: 'kino',
       title: 'Azərbaycan kinosu',
       source: () => films,
@@ -389,6 +392,7 @@
     },
     {
       key: 'mylist',
+      more: '#/siyahim',
       id: 'siyahim',
       title: 'Siyahım',
       note: 'Siyahı yalnız bu brauzerdə saxlanılır.',
@@ -402,6 +406,7 @@
     },
     {
       key: 'classics',
+      more: '#/klassikler',
       id: 'klassikler',
       title: 'Klassiklər',
       note: `${CLASSIC_BEFORE}-ci ilə qədər çəkilmiş filmlər`,
@@ -411,6 +416,7 @@
     { key: 'stats' },
     ...genres.map((g, i) => ({
       key: `genre:${g}`,
+      more: `#/janr/${encodeURIComponent(g)}`,
       id: `janr-${i + 1}`,
       title: g,
       kicker: 'Janr',
@@ -420,6 +426,7 @@
     })),
     {
       key: 'decades',
+      more: '#/onillikler',
       id: 'onilliklar',
       title: 'Onilliklər üzrə',
       decades: true,
@@ -439,6 +446,8 @@
       def.kicker ? h('span', { class: 'row-kicker', text: def.kicker }) : null,
       h('h2', { class: 'row-title', id: titleId, text: def.title }),
       count,
+      def.more ? h('a', { class: 'row-more', href: def.more }, 'Hamısına bax ', h('span', { 'aria-hidden': 'true', text: '→' }),
+        h('span', { class: 'visually-hidden', text: `: ${def.title}` })) : null,
       def.note ? h('p', { class: 'row-note' }, def.noteIcon ? h('span', { svg: ICONS.infoSmall }) : null, def.note) : null
     );
     el.append(head);
@@ -585,6 +594,7 @@
   function renderAll() {
     rowSections.forEach(renderSection);
     renderChips();
+    if (currentPage) currentPage.update();
   }
 
   /* ---------- Üfüqi sıra oxları ---------- */
@@ -872,7 +882,7 @@
   let modalCloseTimer = 0;
   const backgroundEls = [els.topbar, $('#main'), $('.footer'), els.picker, $('.skip-link')];
 
-  function openModal(id, opener) {
+  function openModal(id, opener, { fromRouter = false } = {}) {
     const film = filmById.get(id);
     if (!film) return;
     clearTimeout(modalCloseTimer);
@@ -932,9 +942,16 @@
     void els.modal.offsetWidth; // keçid animasiyası üçün
     els.modal.classList.add('is-open');
     els.modalClose.focus({ preventScroll: true });
+    // paylaşmaq üçün ünvan: #/film/{id}; "geri" düyməsi modalı bağlayır
+    const filmHash = `#/film/${encodeURIComponent(film.id)}`;
+    if (!fromRouter && location.hash !== filmHash) {
+      history.pushState({ film: film.id }, '', filmHash);
+      pushedFilmState = true;
+    }
+    document.title = `${film.title}${film.year ? ` (${film.year})` : ''} — ${SITE_NAME}`;
   }
 
-  function closeModal() {
+  function closeModal({ fromRouter = false } = {}) {
     if (els.modal.hidden || !els.modal.classList.contains('is-open')) return;
     removeTrailer(); // video dərhal dayansın
     els.modal.classList.remove('is-open');
@@ -947,6 +964,13 @@
     if (opener && document.contains(opener)) opener.focus({ preventScroll: true });
 
     modalCloseTimer = setTimeout(() => { els.modal.hidden = true; }, reducedMotion() ? 0 : 320);
+
+    if (!fromRouter && parseHash(location.hash).name === 'film') {
+      if (pushedFilmState) history.back();
+      else history.replaceState(null, '', baseHash);
+    }
+    pushedFilmState = false;
+    setDocumentTitle(currentBase);
   }
 
   /**
@@ -1201,7 +1225,7 @@
     els.genre.value = '';
     renderAll();
     els.search.focus({ preventScroll: true });
-    if (window.matchMedia('(max-width: 719.98px)').matches) setFiltersOpen(true);
+    if (window.matchMedia('(max-width: 1359.98px)').matches) setFiltersOpen(true);
   }
 
   /* ---------- Telefon: filtr paneli ---------- */
@@ -1244,6 +1268,268 @@
     myList = store.read();
     refreshListState();
     renderSection(sectionByKey.mylist);
+    if (currentPage) currentPage.update();
+  });
+
+
+  /* =========================================================
+     Səhifələr və hash routing
+     #/ · #/filmler · #/klassikler · #/janrlar · #/janr/{ad} · #/onillikler · #/siyahim · #/film/{id}
+     ========================================================= */
+  const SITE_NAME = 'Netflix Azərbaycan';
+  const PAGE_TITLES = {
+    home: 'Ana səhifə', filmler: 'Filmlər', klassikler: 'Klassiklər', janrlar: 'Janrlar',
+    onillikler: 'Onilliklər', siyahim: 'Siyahım', notfound: 'Səhifə tapılmadı'
+  };
+  const viewHome = $('#viewHome');
+  const viewPage = $('#viewPage');
+  let currentBase = null;   // hazırda göstərilən səhifə (film modalı onun üstündə açılır)
+  let baseHash = '#/';
+  let currentPage = null;   // { key, update }
+  let pushedFilmState = false;
+  const LEGACY = { siyahim: '#/siyahim', kino: '#/filmler', klassikler: '#/klassikler', top: '#/', top10: '#/', onilliklar: '#/onillikler' };
+
+  function parseHash(hash) {
+    const raw = String(hash || '').replace(/^#/, '');
+    if (!raw || raw === '/') return { name: 'home' };
+    if (!raw.startsWith('/')) return { name: 'legacy', anchor: raw };
+    let parts;
+    try { parts = raw.slice(1).split('/').filter(Boolean).map(decodeURIComponent); } catch { return { name: 'notfound' }; }
+    const [a, b] = parts;
+    if (parts.length === 1 && ['filmler', 'klassikler', 'janrlar', 'onillikler', 'siyahim'].includes(a)) return { name: a };
+    if (parts.length === 2 && a === 'janr') return { name: 'janr', genre: b };
+    if (parts.length === 2 && a === 'film') return { name: 'film', id: b };
+    if (parts.length === 0) return { name: 'home' };
+    return { name: 'notfound' };
+  }
+
+  const routeKey = (r) => (r.name === 'janr' ? `janr/${r.genre}` : r.name);
+
+  function setDocumentTitle(r) {
+    if (!r || r.name === 'home') { document.title = `${SITE_NAME} — Azərbaycan filmləri`; return; }
+    const t = r.name === 'janr' ? `${r.genre} — Janrlar` : PAGE_TITLES[r.name] || PAGE_TITLES.notfound;
+    document.title = `${t} — ${SITE_NAME}`;
+  }
+
+  function markActiveNav(r) {
+    const active = r.name === 'janr' ? 'janrlar' : r.name;
+    $$('.mainnav__link').forEach((a) => {
+      const on = a.dataset.route === active;
+      a.classList.toggle('is-active', on);
+      if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+  }
+
+  /* --- ümumi hissələr --- */
+  function pageHead(title, { kicker, note, controls } = {}) {
+    const count = h('span', { class: 'page__count' });
+    const head = h('header', { class: 'page__head' },
+      h('div', { class: 'page__titles' },
+        kicker ? h('p', { class: 'page__kicker', text: kicker }) : null,
+        h('h1', { class: 'page__title', id: 'pageTitle', text: title }),
+        count,
+        note ? h('p', { class: 'page__note', text: note }) : null),
+      controls || null);
+    return { head, count };
+  }
+
+  function emptyBox({ title, text, reset = false, link = null }) {
+    return h('div', { class: 'row-empty page__empty' },
+      h('strong', { text: title }),
+      text ? h('p', { text }) : null,
+      reset ? h('button', { type: 'button', class: 'btn btn--primary', 'data-reset': '', onclick: resetFilters }, 'Filtrləri sıfırla') : null,
+      link ? h('a', { class: 'btn btn--primary', href: link.href, text: link.text }) : null);
+  }
+
+  /** Kartları grid-ə yerləşdirir; mövcud kartları təkrar istifadə edir (fokus itməsin). */
+  function fillGrid(grid, list) {
+    const existing = new Map($$(':scope > .card', grid).map((el) => [el.dataset.id, el]));
+    const wanted = new Set(list.map((f) => f.id));
+    existing.forEach((el, id) => { if (!wanted.has(id)) el.remove(); });
+    list.forEach((film, i) => {
+      let card = existing.get(film.id);
+      if (!card) {
+        card = createCard(film);
+        card.style.setProperty('--i', String(Math.min(i, 12)));
+      }
+      const cur = grid.children[i];
+      if (cur !== card) grid.insertBefore(card, cur || null);
+    });
+  }
+
+  const countLabel = (shown, all) => (filtersActive() && shown !== all ? `${shown} / ${all} film` : filmWord(all));
+
+  /** Grid səhifəsi: Filmlər, Klassiklər, Siyahım, bir janr. */
+  function gridPage({ key, title, kicker, note, source, sortable = false, emptyAll }) {
+    let controls = null;
+    if (sortable) {
+      const sel = h('select', { id: 'sortSelect', 'aria-label': 'Sıralama' },
+        h('option', { value: 'new', text: 'Ən yeni' }), h('option', { value: 'old', text: 'Ən köhnə' }), h('option', { value: 'az', text: 'A–Z' }));
+      sel.value = state.sort;
+      sel.addEventListener('change', () => { state.sort = sel.value; currentPage.update(); });
+      controls = h('label', { class: 'field page__sort' }, h('span', { class: 'page__sortlabel', text: 'Sıralama' }), sel);
+    }
+    const { head, count } = pageHead(title, { kicker, note, controls });
+    const grid = h('ul', { class: 'grid', 'aria-labelledby': 'pageTitle' });
+    const empty = h('div', { hidden: true });
+    viewPage.replaceChildren(head, grid, empty);
+    return {
+      key,
+      update() {
+        const all = source();
+        let list = all.filter(matchesFilters);
+        if (sortable) {
+          const by = { new: (a, b) => (b.year ?? 0) - (a.year ?? 0), old: (a, b) => (a.year ?? 9999) - (b.year ?? 9999), az: (a, b) => compareAz(a.title, b.title) }[state.sort];
+          list = list.slice().sort(by);
+        }
+        count.textContent = all.length ? countLabel(list.length, all.length) : '';
+        fillGrid(grid, list);
+        grid.hidden = !list.length;
+        empty.hidden = !!list.length;
+        if (!list.length) {
+          empty.replaceChildren(all.length
+            ? emptyBox({ title: 'Uyğun film tapılmadı', text: 'Axtarış sözünü və ya janrı dəyişin, yaxud filtrləri sıfırlayın.', reset: true })
+            : emptyBox(emptyAll()));
+        }
+      }
+    };
+  }
+
+  function genresPage() {
+    const { head, count } = pageHead('Janrlar', { note: 'Janrı seçin — həmin janrın bütün filmləri açılacaq.' });
+    const grid = h('ul', { class: 'genre-grid' });
+    viewPage.replaceChildren(head, grid);
+    return {
+      key: 'janrlar',
+      update() {
+        count.textContent = `${genres.length} janr`;
+        grid.replaceChildren(...genres.map((g) => {
+          const inGenre = films.filter((f) => f.genre === g);
+          const shown = inGenre.filter((f) => !state.query || f.searchKey.includes(state.query)).length;
+          const cover = inGenre.find((f) => f.backdrop) || inGenre.find((f) => f.poster);
+          const img = cover ? h('img', { src: cover.backdrop || cover.poster, alt: '', loading: 'lazy', decoding: 'async' }) : null;
+          return h('li', {},
+            h('a', { class: `genre-card${state.genre === g ? ' is-active' : ''}`, href: `#/janr/${encodeURIComponent(g)}`, style: paletteOf({ id: g }) },
+              img,
+              h('span', { class: 'genre-card__name', text: g }),
+              h('span', { class: 'genre-card__count', text: state.query ? `${shown} / ${inGenre.length} film` : filmWord(inGenre.length) })));
+        }));
+      }
+    };
+  }
+
+  function decadesPage() {
+    const { head, count } = pageHead('Onilliklər', { note: 'Azərbaycan kinosunun zaman xətti — onillik-onillik.' });
+    const line = h('ol', { class: 'timeline' });
+    const empty = h('div', { hidden: true });
+    viewPage.replaceChildren(head, line, empty);
+    return {
+      key: 'onillikler',
+      update() {
+        let total = 0;
+        const items = decades.map((d) => {
+          const list = films.filter((f) => f.year !== null && Math.floor(f.year / 10) * 10 === d && matchesFilters(f))
+            .sort((a, b) => a.year - b.year);
+          total += list.length;
+          if (!list.length) return null;
+          const row = h('ul', { class: 'track is-visible timeline__row' });
+          fillGrid(row, list);
+          return h('li', { class: 'timeline__item', id: `onillik-${d}` },
+            h('div', { class: 'timeline__marker', 'aria-hidden': 'true' }, h('span', { text: String(d) })),
+            h('div', { class: 'timeline__body' },
+              h('h2', { class: 'timeline__title' }, decadeLabel(d), h('span', { class: 'row-count', text: filmWord(list.length) })),
+              row));
+        }).filter(Boolean);
+        line.replaceChildren(...items);
+        count.textContent = `${decades.length} onillik · ${filmWord(total)}`;
+        empty.hidden = !!total;
+        empty.replaceChildren(...(total ? [] : [emptyBox({ title: 'Uyğun film tapılmadı', text: 'Axtarış sözünü və ya janrı dəyişin, yaxud filtrləri sıfırlayın.', reset: true })]));
+      }
+    };
+  }
+
+  function notFoundPage() {
+    viewPage.replaceChildren(h('section', { class: 'notfound' },
+      h('p', { class: 'notfound__code', text: '404' }),
+      h('h1', { class: 'page__title', id: 'pageTitle', text: 'Səhifə tapılmadı' }),
+      h('p', { text: 'Axtardığınız səhifə mövcud deyil və ya köçürülüb.' }),
+      h('a', { class: 'btn btn--primary btn--lg', href: '#/', text: 'Ana səhifəyə qayıt' })));
+    return { key: 'notfound', update() {} };
+  }
+
+  function buildPage(r) {
+    switch (r.name) {
+      case 'filmler':
+        return gridPage({ key: 'filmler', title: 'Filmlər', source: () => films, sortable: true,
+          emptyAll: () => ({ title: 'Hələ film əlavə edilməyib' }) });
+      case 'klassikler':
+        return gridPage({ key: 'klassikler', title: 'Klassiklər', note: `${CLASSIC_BEFORE}-ci ilə qədər çəkilmiş filmlər`,
+          source: () => films.filter(isClassic), emptyAll: () => ({ title: 'Bu bölmədə hələ film yoxdur' }) });
+      case 'siyahim':
+        return gridPage({ key: 'siyahim', title: 'Siyahım', note: 'Siyahı yalnız bu brauzerdə saxlanılır.',
+          source: () => myList.slice().reverse().map((id) => filmById.get(id)).filter(Boolean),
+          emptyAll: () => ({
+            title: 'Siyahınız hələ boşdur',
+            text: 'Bəyəndiyiniz filmin kartındakı “+” düyməsinə və ya filmin pəncərəsindəki “Siyahıma əlavə et” düyməsinə basın — film burada görünəcək.',
+            link: { href: '#/filmler', text: 'Filmlərə bax' }
+          }) });
+      case 'janr':
+        return gridPage({ key: `janr/${r.genre}`, title: r.genre, kicker: 'Janr',
+          source: () => films.filter((f) => f.genre === r.genre), emptyAll: () => ({ title: 'Bu janrda film yoxdur' }) });
+      case 'janrlar': return genresPage();
+      case 'onillikler': return decadesPage();
+      default: return notFoundPage();
+    }
+  }
+
+  function showBase(r) {
+    const key = routeKey(r);
+    if (currentBase && routeKey(currentBase) === key) return; // eyni səhifə — yenidən çəkmə
+    const first = !currentBase;
+    currentBase = r;
+    baseHash = r.name === 'home' ? '#/' : `#/${r.name === 'janr' ? `janr/${encodeURIComponent(r.genre)}` : r.name}`;
+    const isHome = r.name === 'home';
+    viewHome.hidden = !isHome;
+    viewPage.hidden = isHome;
+    currentPage = isHome ? null : buildPage(r);
+    if (currentPage) currentPage.update();
+    const view = isHome ? viewHome : viewPage;
+    if (!first && !reducedMotion()) {
+      view.classList.remove('view-enter');
+      void view.offsetWidth;
+      view.classList.add('view-enter');
+    }
+    // slayder yalnız ana səhifədə işləsin
+    if (isHome) scheduleNextSlide(); else clearTimeout(slideTimer);
+    markActiveNav(r);
+    setDocumentTitle(r);
+    if (!first) window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  function route() {
+    const r = parseHash(location.hash);
+    if (r.name === 'legacy') {
+      const target = LEGACY[r.anchor];
+      if (target) { history.replaceState(null, '', target); route(); }
+      return; // səhifədaxili lövbər (məs. #main) — marşrut deyil
+    }
+    if (r.name === 'janr' && !genres.includes(r.genre)) { showBase({ name: 'notfound' }); return; }
+    if (r.name === 'film') {
+      if (!filmById.has(r.id)) { closeModal({ fromRouter: true }); showBase({ name: 'notfound' }); return; }
+      if (!currentBase) showBase({ name: 'home' });
+      if (modalFilmId !== r.id) openModal(r.id, null, { fromRouter: true });
+      return;
+    }
+    if (!els.modal.hidden && els.modal.classList.contains('is-open')) closeModal({ fromRouter: true });
+    pushedFilmState = false;
+    showBase(r);
+  }
+
+  window.addEventListener('hashchange', route);
+  // "Məzmuna keç" linki hash-i dəyişmədən fokusu əsas hissəyə köçürür
+  $('.skip-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    $('#main').focus();
   });
 
   /* ---------- Başlanğıc ---------- */
@@ -1252,4 +1538,5 @@
   renderAll();
   refreshListState();
   updateHeader();
+  route();
 })();
