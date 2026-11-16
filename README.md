@@ -27,7 +27,7 @@ Sonra brauzerdə `http://localhost:8000` ünvanını açın.
 
 ## Film əlavə etmək
 
-`films.js` faylında 33 real Azərbaycan filmi var: 1991-ci ildən əvvəl çəkilmiş 20 və sonra çəkilmiş 13 film. Hər filmin adı, ili və janrı `source` linkindəki Vikipediya məqaləsindən yoxlanılıb, təsvirlər isə öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi kanallardandır ("Azərbaycanfilm" kinostudiyası və filmlərin istehsalçıları). Şəkillər `posters/` (şaquli poster, ~600px en) və `backdrops/` (filmdən geniş kadr, WebP) qovluqlarındadır. Eni 1280 px-dən kiçik kadrlar hero-da dartılmır — orada posterin bulanıq "ambient" fonu göstərilir, kadr isə film pəncərəsinin bannerində qalır; hər filmin `imageSource` sahəsində şəklin götürüldüyü səhifə göstərilir.
+`films.js` faylında 47 real Azərbaycan filmi var (32-si 1991-ci ildən əvvəl çəkilib). Hər filmin adı, ili və janrı `source` linkindəki mənbədən (əsasən Vikipediya) yoxlanılıb, təsvirlər öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi və ya etibarlı kanallardandır. Şəkillər `posters/` (şaquli poster, ≤600px, WebP) və `backdrops/` (filmdən geniş kadr, WebP) qovluqlarındadır. Eni 1000 px-dən kiçik kadr tam enə dartılmır: arxada onun bulanıq versiyası, ortada orijinal öz ölçüsündə göstərilir.
 
 > **Şəkillərin hüquqi statusu:** posterlərin demək olar hamısı Vikipediyada "ədalətli istifadə" (fair use) statusunda saxlanılan qeyri-azad şəkillərdir, kadrlar isə "Azərbaycanfilm"in rəsmi YouTube önizləmələrindən və treylerlərindən götürülüb. Onlar burada yalnız tədris məqsədilə, filmi tanıtmaq üçün kiçik ölçüdə istifadə olunur. Sayt ictimai yayımlanacaqsa, hüquq sahiblərinin şərtlərini nəzərə alın.
 
@@ -42,13 +42,35 @@ Yeni film əlavə etmək üçün `FILMS` massivinə bu formada obyekt yazın:
   description: "Qısa təsvir",
   source: "https://...",      // məlumatın mənbəyi
   poster: "",                 // şəklin yolu və ya linki; boş qala bilər
-  trailerYoutubeId: ""        // 11 simvolluq YouTube ID; boş qala bilər
+  trailerYoutubeId: "",       // 11 simvolluq YouTube ID; boş qala bilər (treyler modalda oynayır)
+  backdrop: "",               // filmdən geniş kadr; boş qala bilər
+  backdropPosition: "",       // istəyə bağlı, məs. "center 25%" (standart)
+  imageSource: "",            // şəklin götürüldüyü səhifə (və ya linklərin siyahısı)
+  watch: { url: "https://www.youtube.com/watch?v=...", label: "Azərbaycanfilm — YouTube" }, // tam film — yalnız xarici link
+  inCinemas: false,           // true: "Kinoteatrlarda" nişanı, izləmə linki göstərilmir
+  featured: false             // true: ana səhifənin slayderində göstərilir
 }
 ```
+
+> Tam film saytın içində oynamır — `watch` linki yeni tabda Azərbaycanfilm-in rəsmi YouTube kanalını açır. Treyler isə modalda oynaya bilər.
 
 - `poster` boşdursa, kartda film adı yazılmış neytral qradiyent göstərilir (rəsmi poster kimi təqdim edilmir).
 - `trailerYoutubeId` yazılıbsa, film pəncərəsində "Treyleri izlə" düyməsi çıxır. Video `youtube-nocookie.com` üzərindən açılır.
 - İstəyə bağlı: filmlərə `featured: true` yazsanız, onlar yuxarıdakı slayderdə (hero) göstərilir. Heç birində yazılmayıbsa, ilk 5 film göstərilir.
+
+## Səhifələr (hash routing)
+
+| Ünvan | Səhifə |
+|---|---|
+| `#/` | Ana səhifə: slayder, janr çipləri, "Redaksiyanın seçimi", Azərbaycan kinosu, Siyahım, Klassiklər, janr sıraları, onilliklər |
+| `#/filmler` | Bütün filmlər, sıralama: Ən yeni / Ən köhnə / A–Z |
+| `#/klassikler` | 1991-ci ildən əvvəl çəkilmiş filmlər |
+| `#/janrlar`, `#/janr/{ad}` | Janr kartları və seçilmiş janrın filmləri |
+| `#/onillikler` | Onilliklər üzrə zaman xətti |
+| `#/siyahim` | Siyahım |
+| `#/film/{id}` | Filmin pəncərəsini açır (paylaşmaq üçün) |
+
+Axtarış və janr filtri bütün səhifələrdə işləyir və səhifələr arasında saxlanılır. Brauzerin geri/irəli düymələri işləyir. Telefonda (≤768px) naviqasiya aşağıda sabit tab bardır.
 
 ## Funksiyalar
 
@@ -60,10 +82,12 @@ Bütün bölmələr `films.js`-dən avtomatik yaranır.
 - **"Azərbaycan kinosu rəqəmlərdə":** film sayı, janr sayı, ən köhnə və ən yeni filmin ili. Rəqəmlər ekrana girəndə 0-dan sayılır.
 - **Axtarış:** adın bir hissəsinə görə işləyir, böyük-kiçik hərfə baxmır və Azərbaycan hərflərini düzgün müqayisə edir (`İ/i`, `I/ı`). Axtarış və janr birlikdə bütün sıralara tətbiq olunur. Filtrdən sonra boş qalan janr sıraları gizlənir.
 - **Siyahım:** `localStorage`-da saxlanılır, yəni yalnız bu brauzerdə qalır.
+- **İzləmək üçün keçid:** Azərbaycanfilm-in rəsmi YouTube kanalında olan filmlərin kartında ▶ nişanı, pəncərəsində "▶ İzləmək üçün keçid" düyməsi var (yeni tabda açılır).
+- **Kinoteatrlarda:** `inCinemas: true` olan filmlərdə qırmızı nişan və "Hazırda yalnız kinoteatrlarda nümayiş olunur" yazısı.
 - **"Mənə film seç":** seçilmiş janrdan təsadüfi film seçir, axtarış mətnini nəzərə almır.
 - **Poster olmayanda:** film id-sindən yaranan fərqli tünd qradiyent, fonda filmin ili, böyük qalın ad. Bu rəsmi poster kimi təqdim edilmir.
 - Animasiyalar yalnız `transform` və `opacity` ilə qurulub. Sistemdə "azaldılmış hərəkət" (`prefers-reduced-motion`) aktivdirsə, animasiyalar və slayderin avtomatik keçidi söndürülür.
 
-## GitHub Pages
+## Yayım
 
-Repo Settings → Pages bölməsində **Source: Deploy from a branch**, **Branch: `main` / `(root)`** seçin. Bir neçə dəqiqədən sonra sayt `https://<istifadəçi>.github.io/<repo>/` ünvanında açılır.
+Sayt statikdir (build addımı yoxdur): `main` branch-ına push olunanda Vercel onu avtomatik yayımlayır. İstənilən statik hostinqdə (GitHub Pages, Netlify və s.) də `index.html` ilə birlikdə bütün faylları kökdən vermək kifayətdir.

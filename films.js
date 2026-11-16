@@ -476,10 +476,10 @@ const FILMS = [
     genre: "Tarixi",
     description: "XVIII əsrdə Quba xanı Fətəli xan dağınıq Azərbaycan xanlıqlarını vahid dövlətdə birləşdirməyə çalışır. Film onu daxili çəkişmələr və xarici təhlükələr qarşısında həm uzaqgörən diplomat, həm də qətiyyətli sərkərdə kimi göstərir.",
     source: "https://az.wikipedia.org/wiki/F%C9%99t%C9%99li_xan_(film)",
-    poster: "",
+    poster: "posters/fetali-xan-1947.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/fetali-xan-1947.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:F%C9%99t%C9%99li_Xan_(1947)(afi%C5%9Fa).JPG", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=8xHIu4-I-1Y", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -489,10 +489,10 @@ const FILMS = [
     genre: "Musiqili komediya",
     description: "Gözəl səsi olan gənc Bəxtiyar musiqi təhsili almaq məsləhətinə qulaq asmır və ailəsinin yolu ilə gedib neftçi olur. Pul düşkünü klub müdiri Ağabala isə onun istedadını özü üçün qazanc mənbəyinə çevirməyə çalışır.",
     source: "https://az.wikipedia.org/wiki/B%C9%99xtiyar_(film,_1955)",
-    poster: "",
+    poster: "posters/bextiyar-1955.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/bextiyar-1955.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%91%D0%B0%D1%85%D1%82%D0%B8%D1%8F%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=_vxgMXuHnwc", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -502,10 +502,10 @@ const FILMS = [
     genre: "Macəra",
     description: "Film-nağılda xalqın torpağını və suyunu əlindən almış qəddar hökmdara qarşı həkim Eldostu, onun şagirdi Mətanət və gənc usta Elşən birlikdə mübarizəyə qalxır. Hekayə xalq birliyinin və elmin şər üzərində qələbəsini göstərir.",
     source: "https://az.wikipedia.org/wiki/Bir_qalan%C4%B1n_sirri",
-    poster: "",
+    poster: "posters/bir-qalanin-sirri-1959.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/bir-qalanin-sirri-1959.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://commons.wikimedia.org/wiki/File:Das_Geheimnis_der_Festung_Filmplakat.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=Xiq9edTTktY", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -528,10 +528,10 @@ const FILMS = [
     genre: "Dram",
     description: "Mirzə İbrahimovun eyniadlı romanı əsasında çəkilən film kənd həyatındakı dəyişikliklərdən və rəhbərlikdə demokratik üsullar uğrunda mübarizədən bəhs edir. Əsas fikir budur ki, rəhbər yalnız xalqa və kollektivə arxalananda məqsədinə çata bilər.",
     source: "https://az.wikipedia.org/wiki/B%C3%B6y%C3%BCk_dayaq_(film)",
-    poster: "",
+    poster: "posters/boyuk-dayaq-1962.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/boyuk-dayaq-1962.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92%D0%B5%D0%BB%D0%B8%D0%BA%D0%B0%D1%8F_%D0%BE%D0%BF%D0%BE%D1%80%D0%B0_%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=M06c43Bc2-k", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -541,10 +541,10 @@ const FILMS = [
     genre: "Dram",
     description: "Film İkinci Dünya müharibəsi illərində kənddə yaşayan gənc Səidənin taleyindən danışır. Burada həmyerlilərin bir-birinə dayaq olması və cəbhədə əzizlərini itirən ailələrin dərdinə şərik çıxması göstərilir.",
     source: "https://az.wikipedia.org/wiki/M%C9%99n_ki_g%C3%B6z%C9%99l_deyildim",
-    poster: "",
+    poster: "posters/men-ki-gozel-deyildim-1968.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/men-ki-gozel-deyildim-1968.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D1%80%D0%B0%D1%81%D0%B0%D0%B2%D0%B8%D1%86%D0%B5%D0%B9_%D0%BD%D0%B5%D0%B1%D1%8B%D0%BB%D0%B0.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=--JkGGPcxeY", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -554,10 +554,10 @@ const FILMS = [
     genre: "Dram",
     description: "İsmayıl Şıxlının eyniadlı romanı əsasında çəkilən film Azərbaycanda ilk qabaqcıl ziyalıların və pedaqoqların yetişdiyi dövrdən bəhs edir. Hekayədə insanların şüurunda azadlıq duyğusunun necə oyandığı göstərilir.",
     source: "https://az.wikipedia.org/wiki/D%C9%99li_K%C3%BCr_(film)",
-    poster: "",
+    poster: "posters/deli-kur-1969.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/deli-kur-1969.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D1%83%D1%80%D0%B0_%D0%BD%D0%B5%D1%83%D0%BA%D1%80%D0%BE%D1%82%D0%B8%D0%BC%D0%B0%D1%8F_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=yt-1zuQJ3nA", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -567,10 +567,10 @@ const FILMS = [
     genre: "Dram",
     description: "Lirik-psixoloji dram kiçik bir cənub şəhərinin sakinlərindən və köhnə adətlərin onların həyatına necə təsir etdiyindən danışır. Film neorealizm üslubunda çəkilmiş ilk Azərbaycan filmi sayılır.",
     source: "https://az.wikipedia.org/wiki/Bir_c%C9%99nub_%C5%9F%C9%99h%C9%99rind%C9%99",
-    poster: "",
+    poster: "posters/bir-cenub-seherinde-1969.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/bir-cenub-seherinde-1969.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92_%D1%8D%D1%82%D0%BE%D0%BC_%D1%8E%D0%B6%D0%BD%D0%BE%D0%BC_%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%B5.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=DTLxHu9PVhY", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -580,10 +580,10 @@ const FILMS = [
     genre: "Dram",
     description: "Film Bakıda yaşayan iki gəncin uğursuz məhəbbətindən bəhs edir. Zahirən xoşbəxt görünən Əsmər uşaqlıq sevgisini xatırlasa da, keçmişi geri qaytarmağın mümkün olmadığını anlayır.",
     source: "https://az.wikipedia.org/wiki/G%C3%BCn_ke%C3%A7di_(film,_1971)",
-    poster: "",
+    poster: "posters/gun-kecdi-1971.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/gun-kecdi-1971.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%94%D0%B5%D0%BD%D1%8C_%D0%BF%D1%80%D0%BE%D1%88%D1%91%D0%BB.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=596lOCYdiaA", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -593,10 +593,10 @@ const FILMS = [
     genre: "Tarixi",
     description: "Film 1919-cu ildə Azərbaycanın cənubunda, Muğan və Lənkəranda baş verən dramatik hadisələr üzərində qurulub. Ssenarini Əhmədağa Muğanlı yazıb, filmə Şamil Mahmudbəyov quruluş verib.",
     source: "https://az.wikipedia.org/wiki/Od_i%C3%A7ind%C9%99_(film,_1978)",
-    poster: "",
+    poster: "posters/od-icinde-1978.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/od-icinde-1978.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9E%D0%B0%D0%B7%D0%B8%D1%81_%D0%B2_%D0%BE%D0%B3%D0%BD%D0%B5.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=klg4QIznODY", label: "Azərbaycanfilm — YouTube" }
   },
   {
@@ -619,10 +619,10 @@ const FILMS = [
     genre: "Musiqili komediya",
     description: "Nəşriyyat korrektoru Rüstəm içində cin olan qədim çıraq tapır və cinin sayəsində işləri birdən-birə düzəlir. Sonda isə anlayır ki, möcüzə yaratmaq üçün insan hər şeydən əvvəl öz gücünə inanmalıdır.",
     source: "https://az.wikipedia.org/wiki/Cin_mikrorayonda",
-    poster: "",
+    poster: "posters/cin-mikrorayonda-1985.webp",
     trailerYoutubeId: "",
     backdrop: "backdrops/cin-mikrorayonda-1985.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%94%D0%B6%D0%B8%D0%BD_%D0%B2_%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%80%D0%B0%D0%B9%D0%BE%D0%BD%D0%B5.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
     watch: { url: "https://www.youtube.com/watch?v=JVQRfwXtcOQ", label: "Azərbaycanfilm — YouTube" }
   },
   {
