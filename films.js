@@ -21,8 +21,23 @@
  * Sahələr:
  *   id, title, year, genre, description, source, poster, trailerYoutubeId, backdrop, imageSource
  *   featured: true — film yuxarıdakı slayderdə (hero) göstərilir (istəyə bağlı)
+ *   inCinemas: true — film hazırda yalnız kinoteatrlarda nümayiş olunur ("Kinoteatrlarda" nişanı)
  */
 const FILMS = [
+  {
+    id: "44-2026",
+    title: "44",
+    year: 2026,
+    genre: "Müharibə",
+    description: "Film 44 günlük Vətən müharibəsini bir hərbi kursantın gözü ilə, xüsusi təyinatlı zabit Rəşad Xəlilovun, Azərbaycanda çalışan türk ortoped həkim Zeynep Özdemirin və polkovnik Ramazan Kərimovun taleyi üzərindən anladır. Premyerası 2026-cı ilin oktyabrında Heydər Əliyev Mərkəzində keçirilən film oktyabrın 15-dən Azərbaycan kinoteatrlarında nümayiş olunur.",
+    source: "https://www.trend.az/azerbaijan/society/4212020.html",
+    poster: "posters/44-2026.webp",
+    trailerYoutubeId: "OLI8WhqONQA",
+    backdrop: "backdrops/44-2026.webp",
+    imageSource: ["https://www.trend.az/azerbaijan/society/4212020.html", "https://www.youtube.com/watch?v=OLI8WhqONQA"],
+    featured: true,
+    inCinemas: true
+  },
   {
     id: "arsin-mal-alan-1945",
     title: "Arşın mal alan",

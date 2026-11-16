@@ -144,6 +144,7 @@
         .map((u) => String(u ?? '').trim()).filter(isHttpUrl),
       trailerYoutubeId: YT_ID.test(trailer) ? trailer : '',
       featured: item.featured === true,
+      inCinemas: item.inCinemas === true,
       searchKey: normalize(item.title)
     });
   }
@@ -220,6 +221,7 @@
     modalClose: $('#modalClose'),
     modalPoster: $('#modalPoster'),
     modalBanner: $('#modalBanner'),
+    modalCinema: $('#modalCinema'),
     modalImageSource: $('#modalImageSource'),
     modalTitle: $('#modalTitle'),
     modalMeta: $('#modalMeta'),
@@ -275,7 +277,8 @@
     return [
       film.year ? h('span', { class: 'chip chip--red', text: long ? `İl: ${film.year}` : String(film.year) }) : null,
       film.genre ? h('span', { class: 'chip', text: long ? `Janr: ${film.genre}` : film.genre }) : null,
-      isClassic(film) ? h('span', { class: 'chip chip--classic', text: 'Klassik' }) : null
+      isClassic(film) ? h('span', { class: 'chip chip--classic', text: 'Klassik' }) : null,
+      film.inCinemas ? h('span', { class: 'chip chip--cinema', text: 'Kinoteatrlarda' }) : null
     ].filter(Boolean);
   }
 
@@ -331,6 +334,7 @@
     paintListButton(listBtn, film);
 
     const poster = createPoster(film);
+    if (film.inCinemas) poster.append(h('span', { class: 'cinema-badge', text: 'Kinoteatrlarda' }));
     poster.append(
       h('div', { class: 'card__panel', 'aria-hidden': 'true' },
         film.description ? h('p', { class: 'card__panel-desc', text: film.description }) : null,
@@ -895,6 +899,7 @@
       els.modalSource.textContent = 'Mənbə göstərilməyib.';
     }
 
+    els.modalCinema.hidden = !film.inCinemas;
     els.modalList.dataset.listId = film.id;
     paintListButton(els.modalList, film);
 
