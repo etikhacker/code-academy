@@ -145,6 +145,9 @@
       trailerYoutubeId: YT_ID.test(trailer) ? trailer : '',
       featured: item.featured === true,
       inCinemas: item.inCinemas === true,
+      // tam film yalnız xarici linkdir (yeni tabda); kinoteatrda olan filmə link qoyulmur
+      watch: (item.inCinemas !== true && item.watch && isHttpUrl(item.watch.url))
+        ? { url: String(item.watch.url), label: String(item.watch.label || 'YouTube') } : null,
       searchKey: normalize(item.title)
     });
   }
@@ -222,6 +225,8 @@
     modalPoster: $('#modalPoster'),
     modalBanner: $('#modalBanner'),
     modalCinema: $('#modalCinema'),
+    modalWatch: $('#modalWatch'),
+    modalWatchNote: $('#modalWatchNote'),
     modalImageSource: $('#modalImageSource'),
     modalTitle: $('#modalTitle'),
     modalMeta: $('#modalMeta'),
@@ -335,6 +340,7 @@
 
     const poster = createPoster(film);
     if (film.inCinemas) poster.append(h('span', { class: 'cinema-badge', text: 'Kinoteatrlarda' }));
+    else if (film.watch) poster.append(h('span', { class: 'watch-badge', title: 'İzləmək üçün keçid var', 'aria-label': 'İzləmək üçün keçid var', text: '▶' }));
     poster.append(
       h('div', { class: 'card__panel', 'aria-hidden': 'true' },
         film.description ? h('p', { class: 'card__panel-desc', text: film.description }) : null,
@@ -900,6 +906,16 @@
     }
 
     els.modalCinema.hidden = !film.inCinemas;
+    if (film.watch) {
+      els.modalWatch.href = film.watch.url;
+      els.modalWatch.title = film.watch.label;
+      els.modalWatch.hidden = false;
+      els.modalWatchNote.hidden = false;
+    } else {
+      els.modalWatch.hidden = true;
+      els.modalWatch.removeAttribute('href');
+      els.modalWatchNote.hidden = true;
+    }
     els.modalList.dataset.listId = film.id;
     paintListButton(els.modalList, film);
 

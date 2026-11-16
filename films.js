@@ -22,6 +22,8 @@
  *   id, title, year, genre, description, source, poster, trailerYoutubeId, backdrop, imageSource
  *   featured: true — film yuxarıdakı slayderdə (hero) göstərilir (istəyə bağlı)
  *   inCinemas: true — film hazırda yalnız kinoteatrlarda nümayiş olunur ("Kinoteatrlarda" nişanı)
+ *   watch: { url, label } — filmin tam versiyası üçün XARİCİ link (Azərbaycanfilm-in rəsmi YouTube kanalı).
+ *          Film saytın içində oynamır, link yeni tabda açılır.
  */
 const FILMS = [
   {
@@ -49,7 +51,8 @@ const FILMS = [
     trailerYoutubeId: "zSmQEsFFY8M",
     backdrop: "backdrops/arsin-mal-alan-1945.webp",
     imageSource: ["https://en.wikipedia.org/wiki/File:The_Cloth_Peddler_(1945_film).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    featured: true
+    featured: true,
+    watch: { url: "https://www.youtube.com/watch?v=XPh7XwqBFsc", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "gorus-1955",
@@ -61,7 +64,8 @@ const FILMS = [
     poster: "posters/gorus-1955.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/gorus-1955.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92%D1%81%D1%82%D1%80%D0%B5%D1%87%D0%B01955.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%92%D1%81%D1%82%D1%80%D0%B5%D1%87%D0%B01955.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=yfPWDxvogXY", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "o-olmasin-bu-olsun-1956",
@@ -73,7 +77,8 @@ const FILMS = [
     poster: "posters/o-olmasin-bu-olsun-1956.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/o-olmasin-bu-olsun-1956.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B5_%D1%82%D0%B0,_%D1%82%D0%B0%D0%BA_%D1%8D%D1%82%D0%B0_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B5_%D1%82%D0%B0,_%D1%82%D0%B0%D0%BA_%D1%8D%D1%82%D0%B0_(%D1%84%D0%B8%D0%BB%D1%8C%D0%BC).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=mZTbGUGk7Rc", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "bir-mehelleden-iki-nefer-1957",
@@ -84,8 +89,9 @@ const FILMS = [
     source: "https://az.wikipedia.org/wiki/Bir_m%C9%99h%C9%99ll%C9%99d%C9%99n_iki_n%C9%99f%C9%99r",
     poster: "posters/bir-mehelleden-iki-nefer-1957.jpg",
     trailerYoutubeId: "",
-    backdrop: "",
-    imageSource: "https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%94%D0%B2%D0%BE%D0%B5_%D0%B8%D0%B7_%D0%BE%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE_%D0%BA%D0%B2%D0%B0%D1%80%D1%82%D0%B0%D0%BB%D0%B0.jpg"
+    backdrop: "backdrops/bir-mehelleden-iki-nefer-1957.webp",
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%94%D0%B2%D0%BE%D0%B5_%D0%B8%D0%B7_%D0%BE%D0%B4%D0%BD%D0%BE%D0%B3%D0%BE_%D0%BA%D0%B2%D0%B0%D1%80%D1%82%D0%B0%D0%BB%D0%B0.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=SZ8kOmWo5kQ", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "uzaq-sahillerde-1958",
@@ -98,7 +104,8 @@ const FILMS = [
     trailerYoutubeId: "",
     backdrop: "backdrops/uzaq-sahillerde-1958.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B0_%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D0%B8%D1%85_%D0%B1%D0%B5%D1%80%D0%B5%D0%B3%D0%B0%D1%85.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    featured: true
+    featured: true,
+    watch: { url: "https://www.youtube.com/watch?v=yOIpgYGqa7g", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "ogey-ana-1958",
@@ -110,7 +117,8 @@ const FILMS = [
     poster: "posters/ogey-ana-1958.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/ogey-ana-1958.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D0%B0%D1%87%D0%B5%D1%85%D0%B0_1958_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D0%B0%D1%87%D0%B5%D1%85%D0%B0_1958_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=Js9RX9k5VnI", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "koroglu-1960",
@@ -122,7 +130,8 @@ const FILMS = [
     poster: "posters/koroglu-1960.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/koroglu-1960.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D1%91%D1%80-%D0%BE%D0%B3%D0%BB%D1%8B_(%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D1%91%D1%80-%D0%BE%D0%B3%D0%BB%D1%8B_(%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=wuRVEu9TvrA", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "ehmed-haradadir-1963",
@@ -134,7 +143,8 @@ const FILMS = [
     poster: "posters/ehmed-haradadir-1963.jpg",
     trailerYoutubeId: "dd5uk5pJ8Z8",
     backdrop: "backdrops/ehmed-haradadir-1963.webp",
-    imageSource: "https://www.youtube.com/watch?v=dd5uk5pJ8Z8"
+    imageSource: "https://www.youtube.com/watch?v=dd5uk5pJ8Z8",
+    watch: { url: "https://www.youtube.com/watch?v=-Y1JmAZeUMA", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "ulduz-1964",
@@ -146,7 +156,8 @@ const FILMS = [
     poster: "posters/ulduz-1964.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/ulduz-1964.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D1%8E%D0%B1%D0%BE%D0%B2%D1%8C_%D0%B8_%D0%BB%D0%B8%D0%BC%D0%B0%D0%BD%D0%B4%D1%80%D1%8B.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9B%D1%8E%D0%B1%D0%BE%D0%B2%D1%8C_%D0%B8_%D0%BB%D0%B8%D0%BC%D0%B0%D0%BD%D0%B4%D1%80%D1%8B.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=5Ey7IYtSoCM", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "bizim-cebis-muellim-1969",
@@ -158,7 +169,8 @@ const FILMS = [
     poster: "posters/bizim-cebis-muellim-1969.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/bizim-cebis-muellim-1969.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%AF_%D0%BF%D0%BE%D0%BC%D0%BD%D1%8E_%D1%82%D0%B5%D0%B1%D1%8F,_%D1%83%D1%87%D0%B8%D1%82%D0%B5%D0%BB%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%AF_%D0%BF%D0%BE%D0%BC%D0%BD%D1%8E_%D1%82%D0%B5%D0%B1%D1%8F,_%D1%83%D1%87%D0%B8%D1%82%D0%B5%D0%BB%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=br9zD5f-c4A", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "yeddi-ogul-isterem-1970",
@@ -170,7 +182,8 @@ const FILMS = [
     poster: "posters/yeddi-ogul-isterem-1970.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/yeddi-ogul-isterem-1970.webp",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:Yeddi_o%C4%9Ful_ist%C9%99r%C9%99m..._(film,_1970).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:Yeddi_o%C4%9Ful_ist%C9%99r%C9%99m..._(film,_1970).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=NI9D6hvuOGE", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "axirinci-asirim-1971",
@@ -182,7 +195,8 @@ const FILMS = [
     poster: "posters/axirinci-asirim-1971.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/axirinci-asirim-1971.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B9_%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%B0%D0%BB_%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B9_%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%B0%D0%BB_%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D1%80.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=2ZX5ssKQwqw", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "nesimi-1973",
@@ -194,7 +208,8 @@ const FILMS = [
     poster: "posters/nesimi-1973.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/nesimi-1973.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B0%D1%81%D0%B8%D0%BC%D0%B8.JPG", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9D%D0%B0%D1%81%D0%B8%D0%BC%D0%B8.JPG", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=U1csklsXuAs", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "qatir-memmed-1974",
@@ -206,7 +221,8 @@ const FILMS = [
     poster: "posters/qatir-memmed-1974.jpg",
     trailerYoutubeId: "1Y9kA5o7-fk",
     backdrop: "backdrops/qatir-memmed-1974.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D1%81%D1%82%D0%B8%D1%82%D0%B5%D0%BB%D1%8C_%D0%B8%D0%B7_%D0%93%D1%8F%D0%BD%D0%B4%D0%B6%D0%B0%D0%B1%D0%B0%D1%81%D0%B0%D1%80%D0%B0.png", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9C%D1%81%D1%82%D0%B8%D1%82%D0%B5%D0%BB%D1%8C_%D0%B8%D0%B7_%D0%93%D1%8F%D0%BD%D0%B4%D0%B6%D0%B0%D0%B1%D0%B0%D1%81%D0%B0%D1%80%D0%B0.png", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=YUPIIrgwhuA", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "dede-qorqud-1975",
@@ -218,7 +234,8 @@ const FILMS = [
     poster: "posters/dede-qorqud-1975.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/dede-qorqud-1975.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D1%82_%D0%BF%D0%BE%D0%B3%D0%B0%D1%81%D1%88%D0%B8%D1%85_%D0%BA%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B2.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D1%82_%D0%BF%D0%BE%D0%B3%D0%B0%D1%81%D1%88%D0%B8%D1%85_%D0%BA%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B2.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=x7GxpWC20Cc", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "dervis-parisi-partladir-1976",
@@ -230,7 +247,8 @@ const FILMS = [
     poster: "posters/dervis-parisi-partladir-1976.jpg",
     trailerYoutubeId: "Gcwvqt85pI8",
     backdrop: "backdrops/dervis-parisi-partladir-1976.webp",
-    imageSource: ["https://en.wikipedia.org/wiki/File:The_Darvish_Detonates_Paris.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://en.wikipedia.org/wiki/File:The_Darvish_Detonates_Paris.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=4ILjM5NzSKs", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "ad-gunu-1977",
@@ -242,7 +260,8 @@ const FILMS = [
     poster: "posters/ad-gunu-1977.jpg",
     trailerYoutubeId: "EYlGTRl9aVM",
     backdrop: "backdrops/ad-gunu-1977.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:Den_rozhdeniya.jpg", "https://www.youtube.com/watch?v=EYlGTRl9aVM"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:Den_rozhdeniya.jpg", "https://www.youtube.com/watch?v=EYlGTRl9aVM"],
+    watch: { url: "https://www.youtube.com/watch?v=g7apfwPQ_70", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "qaynana-1978",
@@ -254,7 +273,8 @@ const FILMS = [
     poster: "posters/qaynana-1978.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/qaynana-1978.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D0%BA%D1%80%D0%BE%D0%B2%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%A1%D0%B2%D0%B5%D0%BA%D1%80%D0%BE%D0%B2%D1%8C.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=JFGKyPqQuwA", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "babek-1979",
@@ -267,7 +287,8 @@ const FILMS = [
     trailerYoutubeId: "",
     backdrop: "backdrops/babek-1979.webp",
     imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%91%D0%B0%D0%B1%D0%B5%D0%BA.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    featured: true
+    featured: true,
+    watch: { url: "https://www.youtube.com/watch?v=Q_pw4eOm3wI", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "beyin-ogurlanmasi-1985",
@@ -279,7 +300,8 @@ const FILMS = [
     poster: "posters/beyin-ogurlanmasi-1985.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/beyin-ogurlanmasi-1985.webp",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:B%C9%99yin_o%C4%9Furlanmas%C4%B1_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:B%C9%99yin_o%C4%9Furlanmas%C4%B1_poster.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=2auKCopLedM", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "feryad-1993",
@@ -291,7 +313,8 @@ const FILMS = [
     poster: "posters/feryad-1993.jpg",
     trailerYoutubeId: "",
     backdrop: "backdrops/feryad-1993.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%9A%D1%80%D0%B8%D0%BA.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%9A%D1%80%D0%B8%D0%BA.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=P0jcgIcdvpo", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "yarasa-1995",
@@ -315,7 +338,8 @@ const FILMS = [
     poster: "",
     trailerYoutubeId: "",
     backdrop: "backdrops/sari-gelin-1998.webp",
-    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio"
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=Q8mP_Lz4ASs", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "cavid-omru-2007",
@@ -351,7 +375,8 @@ const FILMS = [
     poster: "posters/buta-2011.jpg",
     trailerYoutubeId: "NoW553Ft3H0",
     backdrop: "backdrops/buta-2011.webp",
-    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%91%D1%83%D1%82%D0%B0.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://ru.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9F%D0%BE%D1%81%D1%82%D0%B5%D1%80_%D1%84%D0%B8%D0%BB%D1%8C%D0%BC%D0%B0_%D0%91%D1%83%D1%82%D0%B0.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=FCSuwBCktks", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "dolu-2012",
@@ -363,7 +388,8 @@ const FILMS = [
     poster: "posters/dolu-2012.jpg",
     trailerYoutubeId: "8yDd5-0Xjvk",
     backdrop: "backdrops/dolu-2012.webp",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:Dolu_(film,_2012).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"]
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:Dolu_(film,_2012).jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
+    watch: { url: "https://www.youtube.com/watch?v=xYcT3-9W1f0", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "subhun-sefiri-2012",
@@ -375,7 +401,8 @@ const FILMS = [
     poster: "posters/subhun-sefiri-2012.jpg",
     trailerYoutubeId: "pZKnOF7sP2c",
     backdrop: "backdrops/subhun-sefiri-2012.webp",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:S%C3%BCbh%C3%BCn_s%C9%99firi_(film,_2012).jpg", "https://www.youtube.com/watch?v=pZKnOF7sP2c"]
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:S%C3%BCbh%C3%BCn_s%C9%99firi_(film,_2012).jpg", "https://www.youtube.com/watch?v=pZKnOF7sP2c"],
+    watch: { url: "https://www.youtube.com/watch?v=OQwBXsTSCtE", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "colcu-2012",
@@ -387,7 +414,8 @@ const FILMS = [
     poster: "posters/colcu-2012.jpg",
     trailerYoutubeId: "nqGYlDOjCIY",
     backdrop: "backdrops/colcu-2012.webp",
-    imageSource: ["https://az.wikipedia.org/wiki/Fayl:%C3%87%C3%B6l%C3%A7%C3%BC_(film,_2012).jpg", "https://www.youtube.com/watch?v=nqGYlDOjCIY"]
+    imageSource: ["https://az.wikipedia.org/wiki/Fayl:%C3%87%C3%B6l%C3%A7%C3%BC_(film,_2012).jpg", "https://www.youtube.com/watch?v=nqGYlDOjCIY"],
+    watch: { url: "https://www.youtube.com/watch?v=8yf1izCXitM", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "xoca-2012",
@@ -412,7 +440,8 @@ const FILMS = [
     trailerYoutubeId: "",
     backdrop: "backdrops/nabat-2014.webp",
     imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
-    featured: true
+    featured: true,
+    watch: { url: "https://www.youtube.com/watch?v=t9NyeiJKTsQ", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "nar-bagi-2017",
@@ -425,7 +454,8 @@ const FILMS = [
     trailerYoutubeId: "r9mujDmn9SU",
     backdrop: "backdrops/nar-bagi-2017.webp",
     imageSource: ["https://en.wikipedia.org/wiki/File:Pomegranate_Orchard.jpg", "https://www.youtube.com/@AzerbaijanfilmStudio"],
-    featured: true
+    featured: true,
+    watch: { url: "https://www.youtube.com/watch?v=Q7Xl-LGP3LU", label: "Azərbaycanfilm — YouTube" }
   },
   {
     id: "sepelenmis-olumler-arasinda-2020",
@@ -438,5 +468,174 @@ const FILMS = [
     trailerYoutubeId: "jGLsh2vBo3I",
     backdrop: "",
     imageSource: "https://az.wikipedia.org/wiki/Fayl:S%C9%99p%C9%99l%C9%99nmi%C5%9F_%C3%B6l%C3%BCml%C9%99r_aras%C4%B1nda_(film,_2020).jpg"
+  },
+  {
+    id: "fetali-xan-1947",
+    title: "Fətəli xan",
+    year: 1947,
+    genre: "Tarixi",
+    description: "XVIII əsrdə Quba xanı Fətəli xan dağınıq Azərbaycan xanlıqlarını vahid dövlətdə birləşdirməyə çalışır. Film onu daxili çəkişmələr və xarici təhlükələr qarşısında həm uzaqgörən diplomat, həm də qətiyyətli sərkərdə kimi göstərir.",
+    source: "https://az.wikipedia.org/wiki/F%C9%99t%C9%99li_xan_(film)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/fetali-xan-1947.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=8xHIu4-I-1Y", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "bextiyar-1955",
+    title: "Bəxtiyar",
+    year: 1955,
+    genre: "Musiqili komediya",
+    description: "Gözəl səsi olan gənc Bəxtiyar musiqi təhsili almaq məsləhətinə qulaq asmır və ailəsinin yolu ilə gedib neftçi olur. Pul düşkünü klub müdiri Ağabala isə onun istedadını özü üçün qazanc mənbəyinə çevirməyə çalışır.",
+    source: "https://az.wikipedia.org/wiki/B%C9%99xtiyar_(film,_1955)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/bextiyar-1955.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=_vxgMXuHnwc", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "bir-qalanin-sirri-1959",
+    title: "Bir qalanın sirri",
+    year: 1959,
+    genre: "Macəra",
+    description: "Film-nağılda xalqın torpağını və suyunu əlindən almış qəddar hökmdara qarşı həkim Eldostu, onun şagirdi Mətanət və gənc usta Elşən birlikdə mübarizəyə qalxır. Hekayə xalq birliyinin və elmin şər üzərində qələbəsini göstərir.",
+    source: "https://az.wikipedia.org/wiki/Bir_qalan%C4%B1n_sirri",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/bir-qalanin-sirri-1959.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=Xiq9edTTktY", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "telefoncu-qiz-1962",
+    title: "Telefonçu qız",
+    year: 1962,
+    genre: "Dram",
+    description: "Lirik filmdə həyatda öz yerini axtaran gənc Mehribanın ilk məhəbbəti çətinliklərlə üzləşir. Sevdiyi Zakir onun xəyalındakı insan kimi ola bilmir, amma Mehriban onu özü və insanlara münasibəti barədə düşünməyə vadar edir.",
+    source: "https://az.wikipedia.org/wiki/Telefon%C3%A7u_q%C4%B1z_(film)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/telefoncu-qiz-1962.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=vABWeekHdjU", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "boyuk-dayaq-1962",
+    title: "Böyük dayaq",
+    year: 1962,
+    genre: "Dram",
+    description: "Mirzə İbrahimovun eyniadlı romanı əsasında çəkilən film kənd həyatındakı dəyişikliklərdən və rəhbərlikdə demokratik üsullar uğrunda mübarizədən bəhs edir. Əsas fikir budur ki, rəhbər yalnız xalqa və kollektivə arxalananda məqsədinə çata bilər.",
+    source: "https://az.wikipedia.org/wiki/B%C3%B6y%C3%BCk_dayaq_(film)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/boyuk-dayaq-1962.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=M06c43Bc2-k", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "men-ki-gozel-deyildim-1968",
+    title: "Mən ki gözəl deyildim",
+    year: 1968,
+    genre: "Dram",
+    description: "Film İkinci Dünya müharibəsi illərində kənddə yaşayan gənc Səidənin taleyindən danışır. Burada həmyerlilərin bir-birinə dayaq olması və cəbhədə əzizlərini itirən ailələrin dərdinə şərik çıxması göstərilir.",
+    source: "https://az.wikipedia.org/wiki/M%C9%99n_ki_g%C3%B6z%C9%99l_deyildim",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/men-ki-gozel-deyildim-1968.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=--JkGGPcxeY", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "deli-kur-1969",
+    title: "Dəli Kür",
+    year: 1969,
+    genre: "Dram",
+    description: "İsmayıl Şıxlının eyniadlı romanı əsasında çəkilən film Azərbaycanda ilk qabaqcıl ziyalıların və pedaqoqların yetişdiyi dövrdən bəhs edir. Hekayədə insanların şüurunda azadlıq duyğusunun necə oyandığı göstərilir.",
+    source: "https://az.wikipedia.org/wiki/D%C9%99li_K%C3%BCr_(film)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/deli-kur-1969.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=yt-1zuQJ3nA", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "bir-cenub-seherinde-1969",
+    title: "Bir cənub şəhərində",
+    year: 1969,
+    genre: "Dram",
+    description: "Lirik-psixoloji dram kiçik bir cənub şəhərinin sakinlərindən və köhnə adətlərin onların həyatına necə təsir etdiyindən danışır. Film neorealizm üslubunda çəkilmiş ilk Azərbaycan filmi sayılır.",
+    source: "https://az.wikipedia.org/wiki/Bir_c%C9%99nub_%C5%9F%C9%99h%C9%99rind%C9%99",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/bir-cenub-seherinde-1969.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=DTLxHu9PVhY", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "gun-kecdi-1971",
+    title: "Gün keçdi",
+    year: 1971,
+    genre: "Dram",
+    description: "Film Bakıda yaşayan iki gəncin uğursuz məhəbbətindən bəhs edir. Zahirən xoşbəxt görünən Əsmər uşaqlıq sevgisini xatırlasa da, keçmişi geri qaytarmağın mümkün olmadığını anlayır.",
+    source: "https://az.wikipedia.org/wiki/G%C3%BCn_ke%C3%A7di_(film,_1971)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/gun-kecdi-1971.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=596lOCYdiaA", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "od-icinde-1978",
+    title: "Od içində",
+    year: 1978,
+    genre: "Tarixi",
+    description: "Film 1919-cu ildə Azərbaycanın cənubunda, Muğan və Lənkəranda baş verən dramatik hadisələr üzərində qurulub. Ssenarini Əhmədağa Muğanlı yazıb, filmə Şamil Mahmudbəyov quruluş verib.",
+    source: "https://az.wikipedia.org/wiki/Od_i%C3%A7ind%C9%99_(film,_1978)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/od-icinde-1978.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=klg4QIznODY", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "babamizin-babasinin-babasi-1981",
+    title: "Babamızın babasının babası",
+    year: 1981,
+    genre: "Komediya",
+    description: "Kənddə yaşayan qoca çoban Əziz babanın 160 yaşı olduğu təsadüfən mis qablardakı yazıdan məlum olur. Təntənəli yubiley hazırlanarkən Əziz baba gəncliyini və ilk məhəbbətini xatırlayır.",
+    source: "https://az.wikipedia.org/wiki/Babam%C4%B1z%C4%B1n_babas%C4%B1n%C4%B1n_babas%C4%B1",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/babamizin-babasinin-babasi-1981.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=TGzQ9hRpffA", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "cin-mikrorayonda-1985",
+    title: "Cin mikrorayonda",
+    year: 1985,
+    genre: "Musiqili komediya",
+    description: "Nəşriyyat korrektoru Rüstəm içində cin olan qədim çıraq tapır və cinin sayəsində işləri birdən-birə düzəlir. Sonda isə anlayır ki, möcüzə yaratmaq üçün insan hər şeydən əvvəl öz gücünə inanmalıdır.",
+    source: "https://az.wikipedia.org/wiki/Cin_mikrorayonda",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/cin-mikrorayonda-1985.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=JVQRfwXtcOQ", label: "Azərbaycanfilm — YouTube" }
+  },
+  {
+    id: "haci-qara-2002",
+    title: "Hacı Qara",
+    year: 2002,
+    genre: "Musiqili komediya",
+    description: "Mirzə Fətəli Axundovun eyniadlı pyesi əsasında çəkilən filmdə xəsis tacir Hacı Qaranın başına gələn məzəli əhvalatlar danışılır. Film Arif Məlikovun şux musiqisi və mahnıları ilə müşayiət olunur.",
+    source: "https://az.wikipedia.org/wiki/Hac%C4%B1_Qara_(film,_2002)",
+    poster: "",
+    trailerYoutubeId: "",
+    backdrop: "backdrops/haci-qara-2002.webp",
+    imageSource: "https://www.youtube.com/@AzerbaijanfilmStudio",
+    watch: { url: "https://www.youtube.com/watch?v=RLfkKCSOLO0", label: "Azərbaycanfilm — YouTube" }
   }
 ];

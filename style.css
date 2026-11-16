@@ -568,6 +568,24 @@ ul { margin: 0; padding: 0; list-style: none; }
   text-transform: uppercase;
   box-shadow: 0 4px 14px rgba(229, 9, 20, 0.45);
 }
+.watch-badge {
+  position: absolute;
+  z-index: 2;
+  left: 8px; top: 8px;
+  display: grid;
+  place-items: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.72rem;
+  line-height: 1;
+  padding-left: 2px;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.45);
+}
+.btn--watch[hidden] { display: none; }
+.modal__watchnote { font-size: 0.82rem; color: var(--muted); }
+.modal__watchnote[hidden] { display: none; }
 .modal__cinema {
   display: inline-flex;
   align-items: center;
