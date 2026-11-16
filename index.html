@@ -61,81 +61,21 @@
   </header>
 
   <main id="main">
-    <section class="hero" id="top" aria-labelledby="heroTitle">
-      <div class="hero__bg" id="heroBg" aria-hidden="true"></div>
-      <div class="hero__shade" aria-hidden="true"></div>
-      <div class="hero__content">
-        <p class="hero__eyebrow anim" style="--d:0"><span class="hero__dot" aria-hidden="true"></span>Seçilmiş film</p>
-        <h1 class="hero__title anim" id="heroTitle" style="--d:1"></h1>
-        <p class="hero__meta anim" id="heroMeta" style="--d:2"></p>
-        <p class="hero__desc anim" id="heroDesc" style="--d:3"></p>
-        <div class="hero__actions anim" id="heroActions" style="--d:4">
-          <button class="btn btn--primary btn--lg" id="heroMore" type="button">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-            <span>Ətraflı</span>
-          </button>
-          <button class="btn btn--secondary btn--lg list-toggle" id="heroList" type="button"></button>
-        </div>
-      </div>
+    <h1 class="visually-hidden">Netflix Azərbaycan — Azərbaycan filmləri kataloqu</h1>
+
+    <!-- Hero slayder: app.js films.js-dən doldurur -->
+    <section class="hero" id="top" aria-roledescription="karusel" aria-label="Seçilmiş filmlər">
+      <div class="hero__slides" id="heroSlides"></div>
+      <div class="hero__dots" id="heroDots" role="group" aria-label="Slaydlar"></div>
     </section>
 
-    <div class="rows">
-      <section class="row-section" id="kino" aria-labelledby="kinoTitle">
-        <div class="row-head">
-          <h2 class="row-title" id="kinoTitle">Azərbaycan kinosu</h2>
-          <span class="row-count" data-count></span>
-        </div>
-        <div class="row" data-row>
-          <button class="row__arrow row__arrow--prev" type="button" data-dir="-1" aria-label="Azərbaycan kinosu: əvvəlki filmlər">
-            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <ul class="track" data-track></ul>
-          <button class="row__arrow row__arrow--next" type="button" data-dir="1" aria-label="Azərbaycan kinosu: növbəti filmlər">
-            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <div class="row-empty" data-empty hidden></div>
-      </section>
+    <!-- Janr çipləri -->
+    <nav class="chips-bar" aria-label="Janrlar üzrə filtr">
+      <div class="chips" id="genreChips"></div>
+    </nav>
 
-      <section class="row-section" id="klassikler" aria-labelledby="klassikTitle">
-        <div class="row-head">
-          <h2 class="row-title" id="klassikTitle">Klassiklər</h2>
-          <span class="row-count" data-count></span>
-          <p class="row-note">1991-ci ilə qədər çəkilmiş filmlər</p>
-        </div>
-        <div class="row" data-row>
-          <button class="row__arrow row__arrow--prev" type="button" data-dir="-1" aria-label="Klassiklər: əvvəlki filmlər">
-            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <ul class="track" data-track></ul>
-          <button class="row__arrow row__arrow--next" type="button" data-dir="1" aria-label="Klassiklər: növbəti filmlər">
-            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <div class="row-empty" data-empty hidden></div>
-      </section>
-
-      <section class="row-section" id="siyahim" aria-labelledby="siyahimTitle">
-        <div class="row-head">
-          <h2 class="row-title" id="siyahimTitle">Siyahım</h2>
-          <span class="row-count" data-count></span>
-          <p class="row-note">
-            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-            Siyahı yalnız bu brauzerdə saxlanılır.
-          </p>
-        </div>
-        <div class="row" data-row>
-          <button class="row__arrow row__arrow--prev" type="button" data-dir="-1" aria-label="Siyahım: əvvəlki filmlər">
-            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <ul class="track" data-track></ul>
-          <button class="row__arrow row__arrow--next" type="button" data-dir="1" aria-label="Siyahım: növbəti filmlər">
-            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <div class="row-empty" data-empty hidden></div>
-      </section>
-    </div>
+    <!-- Bütün sıralar app.js tərəfindən yaradılır -->
+    <div class="rows" id="rows"></div>
   </main>
 
   <footer class="footer">

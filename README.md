@@ -44,16 +44,21 @@ Sonra brauzerdə `http://localhost:8000` ünvanını açın.
 
 - `poster` boşdursa, kartda film adı yazılmış neytral qradiyent göstərilir (rəsmi poster kimi təqdim edilmir).
 - `trailerYoutubeId` yazılıbsa, film pəncərəsində "Treyleri izlə" düyməsi çıxır. Video `youtube-nocookie.com` üzərindən açılır.
-- İstəyə bağlı: bir filmə `featured: true` yazsanız, o film yuxarıdakı böyük blokda göstərilir. Yazmasanız, ilk film göstərilir.
+- İstəyə bağlı: filmlərə `featured: true` yazsanız, onlar yuxarıdakı slayderdə (hero) göstərilir. Heç birində yazılmayıbsa, ilk 5 film göstərilir.
 
 ## Funksiyalar
 
-- Üst menyu: axtarış, janr seçimi, "Mənə film seç", "Siyahım". Səhifəni aşağı sürüşdürəndə menyunun fonu şəffafdan tündə keçir. Telefonda axtarış və janr ayrıca düymə ilə açılır.
-- 3 bölmə: **Azərbaycan kinosu** (bütün filmlər), **Klassiklər** (1991-dən əvvəl), **Siyahım**.
-- Axtarış adın bir hissəsinə görə işləyir, böyük-kiçik hərfə baxmır və Azərbaycan hərflərini düzgün müqayisə edir (`İ/i`, `I/ı`). Axtarış və janr birlikdə işləyir və hər 3 bölməyə tətbiq olunur.
-- Siyahım `localStorage`-da saxlanılır, yəni yalnız bu brauzerdə qalır.
-- "Mənə film seç" seçilmiş janrdan təsadüfi film seçir. Axtarış mətnini nəzərə almır.
-- Animasiyalar yalnız `transform` və `opacity` ilə qurulub. Sistemdə "azaldılmış hərəkət" (`prefers-reduced-motion`) aktivdirsə, söndürülür.
+Bütün bölmələr `films.js`-dən avtomatik yaranır.
+
+- **Hero slayder:** `featured: true` olan filmlər (yoxdursa, ilk 5 film) hər 7 saniyədən bir fade ilə dəyişir. Altda nöqtə göstəriciləri var. Siçan üzərində olanda, film pəncərəsi açıq olanda və ya tab gizli olanda slayder dayanır. Sağda filmin posteri, fonda isə onun bulanıq versiyası görünür. Başlığın altında il, janr və 1991-dən əvvəlki filmlər üçün "Klassik" etiketi var.
+- **Janr çipləri:** hero-nun altındadır, basanda janr filtrini dəyişir (menyudakı janr seçimi ilə sinxrondur).
+- **Sıralar:** Top 10 (`films.js`-dəki ilk 10 film, böyük konturlu rəqəmlərlə), Azərbaycan kinosu, Siyahım, Klassiklər, hər janr üçün ayrıca sıra, Onilliklər üzrə (onillik düymələri ilə).
+- **"Azərbaycan kinosu rəqəmlərdə":** film sayı, janr sayı, ən köhnə və ən yeni filmin ili. Rəqəmlər ekrana girəndə 0-dan sayılır.
+- **Axtarış:** adın bir hissəsinə görə işləyir, böyük-kiçik hərfə baxmır və Azərbaycan hərflərini düzgün müqayisə edir (`İ/i`, `I/ı`). Axtarış və janr birlikdə bütün sıralara tətbiq olunur. Filtrdən sonra boş qalan janr sıraları gizlənir.
+- **Siyahım:** `localStorage`-da saxlanılır, yəni yalnız bu brauzerdə qalır.
+- **"Mənə film seç":** seçilmiş janrdan təsadüfi film seçir, axtarış mətnini nəzərə almır.
+- **Poster olmayanda:** film id-sindən yaranan fərqli tünd qradiyent, fonda filmin ili, böyük qalın ad. Bu rəsmi poster kimi təqdim edilmir.
+- Animasiyalar yalnız `transform` və `opacity` ilə qurulub. Sistemdə "azaldılmış hərəkət" (`prefers-reduced-motion`) aktivdirsə, animasiyalar və slayderin avtomatik keçidi söndürülür.
 
 ## GitHub Pages
 

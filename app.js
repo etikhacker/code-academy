@@ -1,6 +1,8 @@
 /* =========================================================
    Netflix Azərbaycan — tətbiq məntiqi (vanilla JS)
    Film məlumatları yalnız films.js-dəki FILMS massivindən oxunur.
+   Bütün bölmələr (hero, janr sıraları, onilliklər, Top 10, rəqəmlər)
+   bu məlumatdan avtomatik yaranır.
    ========================================================= */
 (() => {
   'use strict';
@@ -8,6 +10,9 @@
   const LOCALE = 'az';
   const STORAGE_KEY = 'netflixAz.myList';
   const CLASSIC_BEFORE = 1991;
+  const SLIDE_MS = 7000;
+  const HERO_FALLBACK_COUNT = 5;
+  const TOP_COUNT = 10;
   const YT_ID = /^[A-Za-z0-9_-]{11}$/;
 
   const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -34,12 +39,15 @@
     return el;
   }
 
+  const arrowSvg = (dir) => `<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="${dir < 0 ? 'm15 5-7 7 7 7' : 'm9 5 7 7-7 7'}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
   const ICONS = {
     plus: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
     check: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     minus: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
     arrow: '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    info: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    info: '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    infoSmall: '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
     dice: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>'
   };
 
@@ -55,13 +63,35 @@
     }
   };
 
-  const hashHue = (str) => {
-    let hash = 0;
-    for (const ch of String(str)) hash = (hash * 31 + ch.codePointAt(0)) | 0;
-    return Math.abs(hash) % 360;
+  const hashOf = (str) => {
+    let hash = 2166136261;
+    for (const ch of String(str)) {
+      hash ^= ch.codePointAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  };
+
+  /** Film id-sindən sabit, fərqli tünd qradiyent parametrləri. */
+  const paletteOf = (film) => {
+    const n = hashOf(film.id);
+    const h1 = n % 360;
+    const h2 = (h1 + 35 + ((n >>> 9) % 90)) % 360;
+    const angle = 115 + ((n >>> 17) % 110);
+    return `--h1:${h1};--h2:${h2};--ang:${angle}deg`;
   };
 
   const filmWord = (n) => `${n} film`;
+  const isClassic = (film) => film.year !== null && film.year < CLASSIC_BEFORE;
+
+  /** "1940-cı illər", "1950-ci illər", "2010-cu illər"... */
+  function decadeLabel(decade) {
+    const tens = Math.floor(decade / 10) % 10;
+    let suffix;
+    if (tens === 0) suffix = Math.floor(decade / 100) % 10 === 0 ? 'ci' : 'cü'; // 2000-ci, 1900-cü
+    else suffix = { 1: 'cu', 2: 'ci', 3: 'cu', 4: 'cı', 5: 'ci', 6: 'cı', 7: 'ci', 8: 'ci', 9: 'cı' }[tens];
+    return `${decade}-${suffix} illər`;
+  }
 
   /* ---------- Məlumat (films.js) ---------- */
   const rawFilms = (typeof FILMS !== 'undefined' && Array.isArray(FILMS)) ? FILMS : [];
@@ -101,6 +131,9 @@
   const filmById = new Map(films.map((f) => [f.id, f]));
   const genres = [...new Set(films.map((f) => f.genre).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, LOCALE));
+  const years = films.map((f) => f.year).filter((y) => y !== null);
+  const decades = [...new Set(years.map((y) => Math.floor(y / 10) * 10))].sort((a, b) => a - b);
+  const topRank = new Map(films.slice(0, TOP_COUNT).map((f, i) => [f.id, i + 1]));
 
   /* ---------- Siyahım (localStorage) ---------- */
   const store = {
@@ -135,17 +168,13 @@
     refreshListState({ pulseId: adding ? id : null, sourceButton });
     renderSection(sectionByKey.mylist);
 
-    if (!saved) {
-      toast('Siyahı bu brauzerdə yadda saxlanıla bilmədi.', 'muted');
-    } else if (adding) {
-      toast(`“${film.title}” siyahıya əlavə edildi`);
-    } else {
-      toast(`“${film.title}” siyahıdan çıxarıldı`, 'muted');
-    }
+    if (!saved) toast('Siyahı bu brauzerdə yadda saxlanıla bilmədi.', 'muted');
+    else if (adding) toast(`“${film.title}” siyahıya əlavə edildi`);
+    else toast(`“${film.title}” siyahıdan çıxarıldı`, 'muted');
   }
 
   /* ---------- Filtr vəziyyəti ---------- */
-  const state = { query: '', genre: '' };
+  const state = { query: '', genre: '', decade: decades[0] ?? null };
 
   const matchesFilters = (film) =>
     (!state.genre || film.genre === state.genre) &&
@@ -161,13 +190,11 @@
     filtersToggle: $('#filtersToggle'),
     pickBtn: $('#pickBtn'),
     listCount: $('#listCount'),
-    heroBg: $('#heroBg'),
-    heroTitle: $('#heroTitle'),
-    heroMeta: $('#heroMeta'),
-    heroDesc: $('#heroDesc'),
-    heroActions: $('#heroActions'),
-    heroMore: $('#heroMore'),
-    heroList: $('#heroList'),
+    hero: $('#top'),
+    heroSlides: $('#heroSlides'),
+    heroDots: $('#heroDots'),
+    genreChips: $('#genreChips'),
+    rows: $('#rows'),
     modal: $('#modal'),
     modalDialog: $('#modal .modal__dialog'),
     modalClose: $('#modalClose'),
@@ -188,8 +215,10 @@
   };
 
   /* ---------- Poster ---------- */
+  /** Poster olmadıqda: id-dən yaranan tünd qradiyent, fonda böyük il, böyük ad. Rəsmi poster deyil. */
   function createFallback(film) {
-    return h('div', { class: 'poster__fallback', style: `--h:${hashHue(film.title)}`, 'aria-hidden': 'true' },
+    return h('div', { class: 'poster__fallback', style: paletteOf(film), 'aria-hidden': 'true' },
+      film.year ? h('span', { class: 'poster__year', text: String(film.year) }) : null,
       h('span', { class: 'poster__title', text: film.title }),
       h('span', { class: 'poster__note', text: 'Poster əlavə edilməyib' })
     );
@@ -219,6 +248,14 @@
   }
 
   const metaText = (film) => [film.year, film.genre].filter(Boolean).join(' · ');
+
+  function metaChips(film, { long = false } = {}) {
+    return [
+      film.year ? h('span', { class: 'chip chip--red', text: long ? `İl: ${film.year}` : String(film.year) }) : null,
+      film.genre ? h('span', { class: 'chip', text: long ? `Janr: ${film.genre}` : film.genre }) : null,
+      isClassic(film) ? h('span', { class: 'chip chip--classic', text: 'Klassik' }) : null
+    ].filter(Boolean);
+  }
 
   /* ---------- Siyahı düymələri ---------- */
   function paintListButton(btn, film) {
@@ -263,27 +300,14 @@
   }
 
   /* ---------- Kart ---------- */
-  function createCard(film) {
-    const listBtn = h('button', {
-      type: 'button',
-      class: 'card__list',
-      'data-list-id': film.id
-    });
+  function createCard(film, { rank = null } = {}) {
+    const listBtn = h('button', { type: 'button', class: 'card__list', 'data-list-id': film.id });
     listBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleList(film.id, listBtn);
     });
     paintListButton(listBtn, film);
 
-    const openBtn = h('button', { type: 'button', class: 'card__open' },
-      h('div', { class: 'card__media' },
-        h('div', { class: 'poster-slot' }),
-      ),
-      h('div', { class: 'card__info' },
-        h('h3', { class: 'card__title', text: film.title }),
-        h('p', { class: 'card__meta', text: metaText(film) })
-      )
-    );
     const poster = createPoster(film);
     poster.append(
       h('div', { class: 'card__panel', 'aria-hidden': 'true' },
@@ -291,55 +315,158 @@
         h('span', { class: 'card__panel-more' }, 'Ətraflı ', h('span', { svg: ICONS.arrow }))
       )
     );
-    $('.poster-slot', openBtn).replaceWith(poster);
+
+    const openBtn = h('button', { type: 'button', class: 'card__open' },
+      h('div', { class: 'card__media' }, poster),
+      h('div', { class: 'card__info' },
+        h('h3', { class: 'card__title' },
+          rank ? h('span', { class: 'visually-hidden', text: `Yer ${rank}: ` }) : null,
+          film.title),
+        h('p', { class: 'card__meta', text: metaText(film) })
+      )
+    );
     openBtn.addEventListener('click', () => openModal(film.id, openBtn));
 
     // Siyahı düyməsi açma düyməsinin içində deyil, yanında durur (düymə içində düymə olmasın).
-    return h('li', { class: 'card', 'data-id': film.id },
-      h('div', { class: 'card__inner' }, openBtn, listBtn)
+    const inner = h('div', { class: 'card__inner' }, openBtn, listBtn);
+    return h('li', { class: rank ? 'card card--ranked' : 'card', 'data-id': film.id },
+      rank ? h('span', { class: 'card__rank', 'aria-hidden': 'true', text: String(rank) }) : null,
+      inner
     );
   }
 
   /* ---------- Bölmələr ---------- */
-  const sections = [
+  const sectionDefs = [
     {
-      key: 'all',
-      el: $('#kino'),
-      source: () => films,
-      emptyAll: () => ({
-        title: 'Hələ film əlavə edilməyib',
-        text: 'Filmləri films.js faylına əlavə etdikdən sonra onlar burada görünəcək.'
-      })
+      key: 'top',
+      id: 'top10',
+      title: 'Top 10',
+      note: 'films.js-dəki ilk 10 film',
+      ranked: true,
+      source: () => films.slice(0, TOP_COUNT),
+      emptyAll: () => ({ title: 'Hələ film əlavə edilməyib', text: 'Filmləri films.js faylına əlavə etdikdən sonra onlar burada görünəcək.' })
     },
     {
-      key: 'classics',
-      el: $('#klassikler'),
-      source: () => films.filter((f) => f.year !== null && f.year < CLASSIC_BEFORE),
-      emptyAll: () => ({
-        title: 'Bu bölmədə hələ film yoxdur',
-        text: `${CLASSIC_BEFORE}-ci ildən əvvəl çəkilmiş filmlər avtomatik olaraq burada görünür.`
-      })
+      key: 'all',
+      id: 'kino',
+      title: 'Azərbaycan kinosu',
+      source: () => films,
+      emptyAll: () => ({ title: 'Hələ film əlavə edilməyib', text: 'Filmləri films.js faylına əlavə etdikdən sonra onlar burada görünəcək.' })
     },
     {
       key: 'mylist',
-      el: $('#siyahim'),
+      id: 'siyahim',
+      title: 'Siyahım',
+      note: 'Siyahı yalnız bu brauzerdə saxlanılır.',
+      noteIcon: true,
       // ən son əlavə edilən birinci
       source: () => myList.slice().reverse().map((id) => filmById.get(id)).filter(Boolean),
       emptyAll: () => ({
         title: 'Siyahınız hələ boşdur',
         text: 'Film əlavə etmək üçün kartın küncündəki “+” düyməsinə və ya filmin pəncərəsindəki “Siyahıma əlavə et” düyməsinə basın. Əlavə etdiyiniz filmlər burada toplanacaq.'
       })
+    },
+    {
+      key: 'classics',
+      id: 'klassikler',
+      title: 'Klassiklər',
+      note: `${CLASSIC_BEFORE}-ci ilə qədər çəkilmiş filmlər`,
+      source: () => films.filter(isClassic),
+      emptyAll: () => ({ title: 'Bu bölmədə hələ film yoxdur', text: `${CLASSIC_BEFORE}-ci ildən əvvəl çəkilmiş filmlər avtomatik olaraq burada görünür.` })
+    },
+    { key: 'stats' },
+    ...genres.map((g, i) => ({
+      key: `genre:${g}`,
+      id: `janr-${i + 1}`,
+      title: g,
+      kicker: 'Janr',
+      hideWhenFiltered: true, // filtrdən sonra boş qalan janr sırası gizlənir
+      source: () => films.filter((f) => f.genre === g),
+      emptyAll: () => ({ title: 'Film yoxdur' })
+    })),
+    {
+      key: 'decades',
+      id: 'onilliklar',
+      title: 'Onilliklər üzrə',
+      decades: true,
+      source: () => films.filter((f) => f.year !== null && Math.floor(f.year / 10) * 10 === state.decade),
+      emptyAll: () => ({ title: 'İl məlumatı olan film yoxdur', text: 'films.js-də year sahəsi yazılmış filmlər burada onilliklərə görə qruplaşdırılır.' })
     }
   ];
-  const sectionByKey = Object.fromEntries(sections.map((s) => [s.key, s]));
-  sections.forEach((s) => {
-    s.row = $('[data-row]', s.el);
-    s.track = $('[data-track]', s.el);
-    s.empty = $('[data-empty]', s.el);
-    s.count = $('[data-count]', s.el);
-    s.prev = $('.row__arrow--prev', s.el);
-    s.next = $('.row__arrow--next', s.el);
+
+  const sections = [];
+  const sectionByKey = {};
+
+  function buildRowSection(def) {
+    const titleId = `${def.id}-title`;
+    const el = h('section', { class: 'row-section', id: def.id, 'aria-labelledby': titleId });
+    const count = h('span', { class: 'row-count' });
+    const head = h('div', { class: 'row-head' },
+      def.kicker ? h('span', { class: 'row-kicker', text: def.kicker }) : null,
+      h('h2', { class: 'row-title', id: titleId, text: def.title }),
+      count,
+      def.note ? h('p', { class: 'row-note' }, def.noteIcon ? h('span', { svg: ICONS.infoSmall }) : null, def.note) : null
+    );
+    el.append(head);
+
+    let decadeBar = null;
+    if (def.decades) {
+      decadeBar = h('div', { class: 'chips chips--decades', role: 'group', 'aria-label': 'Onillik seçin' });
+      el.append(decadeBar);
+    }
+
+    const prev = h('button', { type: 'button', class: 'row__arrow row__arrow--prev', 'aria-label': `${def.title}: əvvəlki filmlər`, svg: arrowSvg(-1) });
+    const next = h('button', { type: 'button', class: 'row__arrow row__arrow--next', 'aria-label': `${def.title}: növbəti filmlər`, svg: arrowSvg(1) });
+    const track = h('ul', { class: def.ranked ? 'track track--ranked' : 'track' });
+    const row = h('div', { class: 'row' }, prev, track, next);
+    const empty = h('div', { class: 'row-empty', hidden: true });
+    el.append(row, empty);
+
+    const sec = { ...def, el, row, track, empty, count, prev, next, decadeBar };
+    [prev, next].forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        track.scrollBy({ left: (i ? 1 : -1) * track.clientWidth * 0.85, behavior: reducedMotion() ? 'auto' : 'smooth' });
+      });
+    });
+    let raf = 0;
+    track.addEventListener('scroll', () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => updateArrows(sec));
+    }, { passive: true });
+    return sec;
+  }
+
+  function buildStats() {
+    const oldest = years.length ? Math.min(...years) : null;
+    const newest = years.length ? Math.max(...years) : null;
+    const items = [
+      { value: films.length, label: 'film' },
+      { value: genres.length, label: 'janr' },
+      { value: oldest, label: 'ən köhnə filmin ili' },
+      { value: newest, label: 'ən yeni filmin ili' }
+    ];
+    const el = h('section', { class: 'stats', id: 'reqemler', 'aria-labelledby': 'statsTitle' },
+      h('div', { class: 'stats__head' },
+        h('h2', { class: 'stats__title', id: 'statsTitle' }, 'Azərbaycan kinosu ', h('span', { text: 'rəqəmlərdə' })),
+        h('p', { class: 'stats__note', text: 'Rəqəmlər films.js-dəki məlumatdan hesablanır.' })
+      ),
+      h('ul', { class: 'stats__grid' },
+        items.map((item, i) => h('li', { class: 'stat', style: `--i:${i}` },
+          h('span', { class: 'stat__value', 'data-count-to': item.value ?? '', text: item.value == null ? '—' : '0' }),
+          h('span', { class: 'stat__label', text: item.label })
+        ))
+      )
+    );
+    return { key: 'stats', el, isStats: true };
+  }
+
+  sectionDefs.forEach((def) => {
+    const sec = def.key === 'stats' ? buildStats() : buildRowSection(def);
+    sections.push(sec);
+    sectionByKey[sec.key.startsWith('genre:') ? sec.key : sec.key] = sec;
+    els.rows.append(sec.el);
   });
+  const rowSections = sections.filter((s) => !s.isStats);
 
   function renderEmpty(sec, { title, text, reset }) {
     sec.empty.replaceChildren(...[
@@ -349,25 +476,45 @@
     ].filter(Boolean));
   }
 
+  function renderDecadeBar(sec) {
+    if (!sec.decadeBar) return;
+    sec.decadeBar.hidden = !decades.length;
+    const buttons = decades.map((d) => {
+      const n = films.filter((f) => f.year !== null && Math.floor(f.year / 10) * 10 === d && matchesFilters(f)).length;
+      const active = d === state.decade;
+      return h('button', {
+        type: 'button',
+        class: active ? 'chip-btn is-active' : 'chip-btn',
+        'aria-pressed': String(active),
+        'data-decade': d,
+        onclick: () => {
+          state.decade = d;
+          renderSection(sec);
+        }
+      }, decadeLabel(d), h('span', { class: 'chip-btn__count', text: String(n) }));
+    });
+    const focusedDecade = document.activeElement?.dataset?.decade;
+    sec.decadeBar.replaceChildren(...buttons);
+    if (focusedDecade) $(`[data-decade="${focusedDecade}"]`, sec.decadeBar)?.focus({ preventScroll: true });
+  }
+
   function renderSection(sec) {
+    if (sec.isStats) return;
+    renderDecadeBar(sec);
     const all = sec.source();
     const visible = all.filter(matchesFilters);
 
     sec.count.textContent = all.length
       ? (filtersActive() ? `${visible.length} / ${all.length}` : filmWord(all.length))
       : '';
+    if (sec.decades && state.decade !== null) sec.count.textContent = `${decadeLabel(state.decade)} · ${sec.count.textContent || '0 film'}`;
 
-    if (!all.length) {
+    if (sec.hideWhenFiltered) sec.el.hidden = !visible.length;
+
+    if (!all.length || !visible.length) {
       sec.row.hidden = true;
       sec.empty.hidden = false;
-      renderEmpty(sec, sec.emptyAll());
-      sec.track.replaceChildren();
-      return;
-    }
-    if (!visible.length) {
-      sec.row.hidden = true;
-      sec.empty.hidden = false;
-      renderEmpty(sec, {
+      renderEmpty(sec, !all.length ? sec.emptyAll() : {
         title: 'Uyğun film tapılmadı',
         text: 'Axtarış sözünü və ya janrı dəyişin, yaxud filtrləri sıfırlayın.',
         reset: true
@@ -383,23 +530,27 @@
     // Mövcud kartları təkrar istifadə et ki, animasiya hər dəfə yenidən başlamasın.
     const existing = new Map($$(':scope > .card', sec.track).map((el) => [el.dataset.id, el]));
     const wanted = new Set(visible.map((f) => f.id));
-    existing.forEach((el, id) => { if (!wanted.has(id)) el.remove(); });
+    let changed = existing.size !== wanted.size;
+    existing.forEach((el, id) => { if (!wanted.has(id)) { el.remove(); changed = true; } });
 
     visible.forEach((film, index) => {
       let card = existing.get(film.id);
       if (!card) {
-        card = createCard(film);
+        card = createCard(film, { rank: sec.ranked ? topRank.get(film.id) : null });
         card.style.setProperty('--i', String(Math.min(index, 10)));
       }
       const current = sec.track.children[index];
       if (current !== card) sec.track.insertBefore(card, current || null);
     });
 
+    // Siyahı dəyişibsə, sıranı əvvələ qaytar (əks halda birinci kart kəsik görünür).
+    if (changed) sec.track.scrollLeft = 0;
     requestAnimationFrame(() => updateArrows(sec));
   }
 
   function renderAll() {
-    sections.forEach(renderSection);
+    rowSections.forEach(renderSection);
+    renderChips();
   }
 
   /* ---------- Üfüqi sıra oxları ---------- */
@@ -410,75 +561,192 @@
     sec.next.disabled = t.scrollLeft >= max - 4;
   }
 
-  sections.forEach((sec) => {
-    [sec.prev, sec.next].forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const dir = Number(btn.dataset.dir);
-        sec.track.scrollBy({
-          left: dir * sec.track.clientWidth * 0.85,
-          behavior: reducedMotion() ? 'auto' : 'smooth'
-        });
-      });
-    });
-    let raf = 0;
-    sec.track.addEventListener('scroll', () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => updateArrows(sec));
-    }, { passive: true });
-  });
-
   if ('ResizeObserver' in window) {
-    const ro = new ResizeObserver(() => sections.forEach(updateArrows));
-    sections.forEach((s) => ro.observe(s.track));
+    const ro = new ResizeObserver(() => rowSections.forEach(updateArrows));
+    rowSections.forEach((s) => ro.observe(s.track));
   }
 
-  /* ---------- Kartların scroll ilə görünməsi (stagger) ---------- */
+  /* ---------- Rəqəm sayğacı ---------- */
+  function countUp(el) {
+    const target = Number(el.dataset.countTo);
+    if (!Number.isFinite(target) || el.dataset.countTo === '') return;
+    if (reducedMotion()) { el.textContent = String(target); return; }
+    const duration = 1600;
+    const start = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(target * eased));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- Scroll ilə görünmə (kartlar stagger, rəqəmlər sayğac) ---------- */
+  const statsEl = sectionByKey.stats.el;
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        if (entry.target === statsEl) $$('[data-count-to]', statsEl).forEach(countUp);
+        io.unobserve(entry.target);
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    sections.forEach((s) => io.observe(s.track));
+    rowSections.forEach((s) => io.observe(s.track));
+    io.observe(statsEl);
   } else {
-    sections.forEach((s) => s.track.classList.add('is-visible'));
+    rowSections.forEach((s) => s.track.classList.add('is-visible'));
+    statsEl.classList.add('is-visible');
+    $$('[data-count-to]', statsEl).forEach((el) => { if (el.dataset.countTo !== '') el.textContent = el.dataset.countTo; });
   }
 
-  /* ---------- Hero ---------- */
-  const featured = films.find((f) => f.featured) || films[0] || null;
+  /* ---------- Hero slayder ---------- */
+  const featuredFilms = films.filter((f) => f.featured);
+  const slides = featuredFilms.length ? featuredFilms : films.slice(0, HERO_FALLBACK_COUNT);
+  let slideIndex = 0;
+  const slideEls = [];
+  const dotEls = [];
 
-  function renderHero() {
-    els.heroBg.replaceChildren();
-    if (!featured) {
-      els.heroBg.className = 'hero__bg hero__bg--art';
-      els.heroTitle.textContent = 'Netflix Azərbaycan';
-      els.heroMeta.replaceChildren();
-      els.heroDesc.textContent = 'Hələ film əlavə edilməyib. Filmləri films.js faylına əlavə edin.';
-      els.heroActions.hidden = true;
+  function heroBackground(film) {
+    const bg = h('div', { class: 'hero__bg', 'aria-hidden': 'true' });
+    if (film.poster) {
+      // posterin bulanıq, qaranlıq versiyası
+      const img = h('img', { alt: '', decoding: 'async' });
+      img.addEventListener('error', () => { img.remove(); bg.classList.add('hero__bg--art'); }, { once: true });
+      img.src = film.poster;
+      bg.append(img);
+    } else {
+      bg.classList.add('hero__bg--art');
+      bg.setAttribute('style', paletteOf(film));
+    }
+    return bg;
+  }
+
+  function buildSlide(film, i) {
+    const moreBtn = h('button', { type: 'button', class: 'btn btn--primary btn--lg' },
+      h('span', { svg: ICONS.info }), h('span', { text: 'Ətraflı' }));
+    moreBtn.addEventListener('click', () => openModal(film.id, moreBtn));
+    const listBtn = h('button', { type: 'button', class: 'btn btn--secondary btn--lg list-toggle', 'data-list-id': film.id });
+    listBtn.addEventListener('click', () => toggleList(film.id, listBtn));
+    paintListButton(listBtn, film);
+
+    const posterBtn = h('button', { type: 'button', class: 'hero__poster anim', style: '--d:2', tabindex: '-1', 'aria-hidden': 'true' },
+      createPoster(film, { eager: i === 0 }));
+    posterBtn.addEventListener('click', () => openModal(film.id, moreBtn));
+
+    return h('article', {
+      class: 'hero__slide',
+      'aria-roledescription': 'slayd',
+      'aria-label': `${i + 1} / ${slides.length}: ${film.title}`
+    },
+      heroBackground(film),
+      h('div', { class: 'hero__shade', 'aria-hidden': 'true' }),
+      h('div', { class: 'hero__inner' },
+        h('div', { class: 'hero__content' },
+          h('p', { class: 'hero__eyebrow anim', style: '--d:0' },
+            h('span', { class: 'hero__pin', 'aria-hidden': 'true' }),
+            film.featured ? 'Seçilmiş film' : 'Kataloqdan'),
+          h('h2', { class: 'hero__title anim', style: '--d:1', text: film.title }),
+          h('p', { class: 'hero__meta anim', style: '--d:2' }, metaChips(film)),
+          film.description ? h('p', { class: 'hero__desc anim', style: '--d:3', text: film.description }) : null,
+          h('div', { class: 'hero__actions anim', style: '--d:4' }, moreBtn, listBtn)
+        ),
+        posterBtn
+      )
+    );
+  }
+
+  function buildHero() {
+    if (!slides.length) {
+      els.heroSlides.append(h('article', { class: 'hero__slide is-active' },
+        h('div', { class: 'hero__bg hero__bg--art', 'aria-hidden': 'true' }),
+        h('div', { class: 'hero__shade', 'aria-hidden': 'true' }),
+        h('div', { class: 'hero__inner' },
+          h('div', { class: 'hero__content' },
+            h('h2', { class: 'hero__title anim', style: '--d:0', text: 'Netflix Azərbaycan' }),
+            h('p', { class: 'hero__desc anim', style: '--d:1', text: 'Hələ film əlavə edilməyib. Filmləri films.js faylına əlavə edin.' })
+          )
+        )
+      ));
+      els.heroDots.hidden = true;
       return;
     }
-    if (featured.poster) {
-      els.heroBg.className = 'hero__bg hero__bg--art';
-      const img = h('img', { alt: '', decoding: 'async', fetchpriority: 'high' });
-      img.addEventListener('error', () => img.remove(), { once: true });
-      img.src = featured.poster;
-      els.heroBg.append(img);
+    slides.forEach((film, i) => {
+      const slide = buildSlide(film, i);
+      slideEls.push(slide);
+      els.heroSlides.append(slide);
+    });
+
+    if (slides.length < 2) {
+      els.heroDots.hidden = true;
     } else {
-      els.heroBg.className = 'hero__bg hero__bg--art';
+      slides.forEach((film, i) => {
+        const fill = h('span', { class: 'hero__dot-fill' });
+        // nöqtənin doluluq animasiyası bitəndə növbəti slayda keçilir (hover-də animasiya dayanır)
+        fill.addEventListener('animationend', (e) => {
+          if (e.animationName === 'dotFill' && i === slideIndex && !reducedMotion()) goToSlide(slideIndex + 1);
+        });
+        const dot = h('button', {
+          type: 'button',
+          class: 'hero__dot',
+          'aria-label': `Slayd ${i + 1}: ${film.title}`,
+          onclick: () => goToSlide(i)
+        }, fill);
+        dotEls.push(dot);
+        els.heroDots.append(dot);
+      });
     }
-    els.heroTitle.textContent = featured.title;
-    els.heroMeta.replaceChildren(
-      ...[featured.year, featured.genre].filter(Boolean).map((v, i) =>
-        h('span', { class: i === 0 ? 'chip chip--red' : 'chip', text: String(v) }))
-    );
-    els.heroDesc.textContent = featured.description;
-    els.heroList.dataset.listId = featured.id;
-    paintListButton(els.heroList, featured);
-    els.heroMore.addEventListener('click', () => openModal(featured.id, els.heroMore));
-    els.heroList.addEventListener('click', () => toggleList(featured.id, els.heroList));
+    goToSlide(0);
+  }
+
+  function goToSlide(i) {
+    if (!slideEls.length) return;
+    slideIndex = (i + slideEls.length) % slideEls.length;
+    slideEls.forEach((el, k) => {
+      const active = k === slideIndex;
+      el.classList.toggle('is-active', active);
+      if (active) el.removeAttribute('inert'); else el.setAttribute('inert', '');
+      el.setAttribute('aria-hidden', String(!active));
+    });
+    dotEls.forEach((dot, k) => {
+      const active = k === slideIndex;
+      dot.classList.remove('is-active');
+      if (active) {
+        void dot.offsetWidth; // doluluq animasiyasını yenidən başlat
+        dot.classList.add('is-active');
+      }
+      dot.setAttribute('aria-current', active ? 'true' : 'false');
+    });
+  }
+
+  // Tab gizlənəndə slayder dayansın
+  document.addEventListener('visibilitychange', () => {
+    els.hero.classList.toggle('is-paused', document.hidden);
+  });
+
+  /* ---------- Janr çipləri ---------- */
+  function renderChips() {
+    const options = [{ value: '', label: 'Bütün janrlar' }, ...genres.map((g) => ({ value: g, label: g }))];
+    const focused = document.activeElement?.closest?.('#genreChips') ? document.activeElement.dataset.genre : null;
+    els.genreChips.replaceChildren(...options.map((o) => {
+      const active = o.value === state.genre;
+      const n = o.value ? films.filter((f) => f.genre === o.value).length : films.length;
+      return h('button', {
+        type: 'button',
+        class: active ? 'chip-btn is-active' : 'chip-btn',
+        'aria-pressed': String(active),
+        'data-genre': o.value,
+        onclick: () => setGenre(o.value)
+      }, o.label, h('span', { class: 'chip-btn__count', text: String(n) }));
+    }));
+    if (focused != null) $(`[data-genre="${CSS.escape(focused)}"]`, els.genreChips)?.focus({ preventScroll: true });
+  }
+
+  function setGenre(value) {
+    state.genre = value;
+    els.genre.value = value;
+    renderAll();
   }
 
   /* ---------- Modal ---------- */
@@ -496,10 +764,7 @@
 
     els.modalPoster.replaceChildren(createPoster(film, { eager: true }));
     els.modalTitle.textContent = film.title;
-    els.modalMeta.replaceChildren(
-      ...(film.year ? [h('span', { class: 'chip chip--red', text: `İl: ${film.year}` })] : []),
-      ...(film.genre ? [h('span', { class: 'chip', text: `Janr: ${film.genre}` })] : [])
-    );
+    els.modalMeta.replaceChildren(...metaChips(film, { long: true }));
     els.modalDesc.textContent = film.description || 'Təsvir əlavə edilməyib.';
 
     if (film.source && isHttpUrl(film.source)) {
@@ -519,8 +784,9 @@
     removeTrailer();
     els.modalTrailer.hidden = !film.trailerYoutubeId;
 
-    // body scroll-unu blokla, arxa fonu əlçatmaz et
+    // body scroll-unu blokla, arxa fonu əlçatmaz et, slayderi dayandır
     document.body.classList.add('is-locked');
+    els.hero.classList.add('is-paused');
     backgroundEls.forEach((el) => el && el.setAttribute('inert', ''));
 
     els.modal.hidden = false;
@@ -535,6 +801,7 @@
     removeTrailer(); // video dərhal dayansın
     els.modal.classList.remove('is-open');
     document.body.classList.remove('is-locked');
+    els.hero.classList.toggle('is-paused', document.hidden);
     backgroundEls.forEach((el) => el && el.removeAttribute('inert'));
     modalFilmId = null;
 
@@ -609,7 +876,6 @@
 
   /* ---------- "Mənə film seç" ---------- */
   let spinTimer = 0;
-  let pickerOpener = null;
 
   function slotItem(film) {
     return h('div', { class: 'slot__item' },
@@ -639,14 +905,11 @@
       els.picker.classList.add('is-closing');
       setTimeout(finish, 250);
     }
-    if (restoreFocus && els.picker.contains(document.activeElement)) {
-      (pickerOpener && document.contains(pickerOpener) ? pickerOpener : els.pickBtn).focus({ preventScroll: true });
-    }
+    if (restoreFocus && els.picker.contains(document.activeElement)) els.pickBtn.focus({ preventScroll: true });
   }
 
   function pickFilm() {
     clearTimeout(spinTimer);
-    pickerOpener = els.pickBtn;
     const genre = state.genre; // axtarış mətni nəzərə alınmır
     const pool = genre ? films.filter((f) => f.genre === genre) : films;
     els.pickerGenre.textContent = `Janr: ${genre || 'Bütün janrlar'}`;
@@ -693,8 +956,7 @@
         showPick(chosen, slot);
         return;
       }
-      const delay = 55 + Math.pow(step / steps, 2.2) * 260;
-      spinTimer = setTimeout(tick, delay);
+      spinTimer = setTimeout(tick, 55 + Math.pow(step / steps, 2.2) * 260);
     };
     tick();
   }
@@ -708,12 +970,12 @@
     const label = $('.picker__label', els.pickerStage);
     if (label) label.textContent = 'Bu gün izləməyə dəyər';
 
-    const moreBtn = h('button', { type: 'button', class: 'btn btn--primary', svg: '' });
-    moreBtn.append(h('span', { svg: ICONS.info }), h('span', { text: 'Ətraflı' }));
+    const moreBtn = h('button', { type: 'button', class: 'btn btn--primary' },
+      h('span', { svg: ICONS.info }), h('span', { text: 'Ətraflı' }));
     moreBtn.addEventListener('click', () => openModal(film.id, moreBtn));
 
-    const againBtn = h('button', { type: 'button', class: 'btn btn--ghost' });
-    againBtn.append(h('span', { svg: ICONS.dice }), h('span', { text: 'Yenidən seç' }));
+    const againBtn = h('button', { type: 'button', class: 'btn btn--ghost' },
+      h('span', { svg: ICONS.dice }), h('span', { text: 'Yenidən seç' }));
     againBtn.addEventListener('click', pickFilm);
 
     els.pickerStage.append(h('div', { class: 'picker__actions' }, moreBtn, againBtn));
@@ -746,10 +1008,7 @@
       renderAll();
     }
   });
-  els.genre.addEventListener('change', () => {
-    state.genre = els.genre.value;
-    renderAll();
-  });
+  els.genre.addEventListener('change', () => setGenre(els.genre.value));
 
   function resetFilters() {
     clearTimeout(searchTimer);
@@ -806,7 +1065,7 @@
 
   /* ---------- Başlanğıc ---------- */
   populateGenres();
-  renderHero();
+  buildHero();
   renderAll();
   refreshListState();
   updateHeader();
