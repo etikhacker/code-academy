@@ -81,6 +81,21 @@
     return `--h1:${h1};--h2:${h2};--ang:${angle}deg`;
   };
 
+  /** Azərbaycan əlifbası ilə sıralama (brauzerlərin "az" sıralaması həmişə dəqiq olmur). */
+  const AZ_ALPHABET = 'abcçdeəfgğhxıijkqlmnoöprsştuüvyz';
+  function compareAz(a, b) {
+    const x = normalize(a);
+    const y = normalize(b);
+    for (let i = 0; i < Math.min(x.length, y.length); i++) {
+      if (x[i] === y[i]) continue;
+      const ix = AZ_ALPHABET.indexOf(x[i]);
+      const iy = AZ_ALPHABET.indexOf(y[i]);
+      if (ix !== -1 && iy !== -1) return ix - iy;
+      return x[i].localeCompare(y[i], LOCALE);
+    }
+    return x.length - y.length;
+  }
+
   const filmWord = (n) => `${n} film`;
   const isClassic = (film) => film.year !== null && film.year < CLASSIC_BEFORE;
 
@@ -130,7 +145,7 @@
 
   const filmById = new Map(films.map((f) => [f.id, f]));
   const genres = [...new Set(films.map((f) => f.genre).filter(Boolean))]
-    .sort((a, b) => a.localeCompare(b, LOCALE));
+    .sort(compareAz);
   const years = films.map((f) => f.year).filter((y) => y !== null);
   const decades = [...new Set(years.map((y) => Math.floor(y / 10) * 10))].sort((a, b) => a - b);
   const topRank = new Map(films.slice(0, TOP_COUNT).map((f, i) => [f.id, i + 1]));
