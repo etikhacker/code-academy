@@ -360,6 +360,27 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 /* kadr yoxdursa: posterin bulanıq, qaranlıq versiyası */
 .hero__bg img { opacity: 0; transition: opacity 0.6s ease; }
+/* dar kadr: arxada bulanıq versiya, ortada orijinal öz ölçüsündə (dartılmır) */
+.img-blur {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: blur(35px) brightness(0.42) saturate(1.2);
+  transform: scale(1.2);
+  opacity: 1 !important;
+}
+.hero__bg--fit img:not(.img-blur),
+.modal__banner--fit img:not(.img-blur) {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: auto; height: auto;
+  max-width: 100%; max-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+}
+.hero__bg--fit img:not(.img-blur) {
+  box-shadow: 0 0 120px 60px rgba(11, 11, 15, 0.55);
+}
 .hero__bg img.is-ready { opacity: 1; }
 /* kiçik kadr və ya kadr yoxdursa: posterin güclü bulanıq, qaranlıq "ambient" fonu */
 .hero__bg--ambient img {
@@ -1089,12 +1110,12 @@ ul { margin: 0; padding: 0; list-style: none; }
   grid-area: banner;
   position: relative;
   margin: -20px -20px -36px;
-  aspect-ratio: 16 / 8;
+  height: 180px;
   overflow: hidden;
   border-radius: 16px 16px 0 0;
   background: #101016;
 }
-.modal__banner img { width: 100%; height: 100%; object-fit: cover; object-position: center 12%; transition: opacity 0.4s ease; }
+.modal__banner img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: opacity 0.4s ease; }
 .modal__banner.is-loading img { opacity: 0; }
 .modal__banner.is-loading::before {
   content: "";
@@ -1106,7 +1127,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 .modal__banner::after {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(to top, #18181f 0%, rgba(24, 24, 31, 0.55) 35%, rgba(24, 24, 31, 0) 70%);
+  z-index: 1;
+  background: linear-gradient(to top, #18181f 0%, rgba(24, 24, 31, 0.6) 30%, rgba(24, 24, 31, 0) 65%);
 }
 .modal__banner--blur img { filter: blur(28px) brightness(0.5); transform: scale(1.2); }
 .modal__banner--art {
@@ -1151,7 +1173,7 @@ ul { margin: 0; padding: 0; list-style: none; }
       "imgsrc imgsrc";
     gap: 24px 28px;
   }
-  .modal__banner { margin: -28px -28px -84px; aspect-ratio: 21 / 8; }
+  .modal__banner { margin: -28px -28px -84px; height: 280px; }
   .modal__poster { position: relative; z-index: 1; }
   .modal__main { grid-area: main; display: flex; flex-direction: column; gap: 18px; padding-top: 6px; }
   .modal__head { align-self: stretch; }

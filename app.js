@@ -12,7 +12,8 @@
   const CLASSIC_BEFORE = 1991;
   const SLIDE_MS = 7000;
   const HERO_FALLBACK_COUNT = 5;
-  const MIN_BACKDROP_WIDTH = 1280; // bundan kiçik kadr hero-da tam ekran dartılmır
+  const MIN_STRETCH_WIDTH = 1000; // bundan dar şəkil tam enə dartılmır
+  const DEFAULT_BACKDROP_POSITION = 'center 25%';
   const TOP_COUNT = 10;
   const YT_ID = /^[A-Za-z0-9_-]{11}$/;
 
@@ -139,6 +140,7 @@
       source: String(item.source ?? '').trim(),
       poster: String(item.poster ?? '').trim(),
       backdrop: String(item.backdrop ?? '').trim(),
+      backdropPosition: String(item.backdropPosition ?? '').trim() || DEFAULT_BACKDROP_POSITION,
       // imageSource: bir link və ya linklərin siyahısı (poster və kadr fərqli mənbədəndirsə)
       imageSource: (Array.isArray(item.imageSource) ? item.imageSource : [item.imageSource])
         .map((u) => String(u ?? '').trim()).filter(isHttpUrl),
@@ -657,6 +659,7 @@
     const img = h('img', { alt: '', decoding: 'async' });
     img.dataset.backdrop = film.backdrop;
     img.dataset.poster = film.poster;
+    img.dataset.position = film.backdropPosition;
     bg.append(img);
     return bg;
   }
@@ -668,17 +671,14 @@
   }
 
   function loadHeroBackground(bg) {
-    const img = $('img', bg);
+    const img = $('img:not(.img-blur)', bg);
     if (!img || img.dataset.started) return;
     img.dataset.started = '1';
     const { backdrop, poster } = img.dataset;
+    if (img.dataset.position) img.style.objectPosition = img.dataset.position;
     img.addEventListener('load', () => {
-      const isBackdrop = img.getAttribute('src') === backdrop;
-      if (isBackdrop && img.naturalWidth < MIN_BACKDROP_WIDTH && !bg.classList.contains('hero__bg--ambient')) {
-        // kiçik kadr dartılmasın: posterin (o da yoxdursa kadrın özünün) bulanıq versiyası
-        useAmbient(bg, img, poster || backdrop);
-        return;
-      }
+      // kadr dardırsa, dartılmır: bulanıq fon + mərkəzdə öz ölçüsündə orijinal
+      if (img.getAttribute('src') === backdrop) fitNarrowImage(bg, img, 'hero__bg--fit');
       img.classList.add('is-ready');
     });
     img.addEventListener('error', () => {
@@ -687,6 +687,7 @@
       bg.classList.remove('hero__bg--ambient');
       bg.classList.add('hero__bg--art');
     });
+    // kadr yoxdursa: posterin güclü bulanıq "ambient" fonu
     if (backdrop) img.src = backdrop;
     else useAmbient(bg, img, poster);
   }
@@ -948,6 +949,21 @@
     modalCloseTimer = setTimeout(() => { els.modal.hidden = true; }, reducedMotion() ? 0 : 320);
   }
 
+  /**
+   * Dar şəkli (naturalWidth < 1000) dartmamaq üçün: arxada həmin şəklin güclü bulanıq, qaranlıq
+   * versiyası, üstündə orijinal öz ölçüsündə, mərkəzdə. Hero və modal banneri üçün ortaqdır.
+   */
+  function fitNarrowImage(box, img, fitClass) {
+    if (img.naturalWidth >= MIN_STRETCH_WIDTH || box.classList.contains(fitClass)) return false;
+    box.classList.add(fitClass);
+    const blur = h('img', { alt: '', class: 'img-blur', 'aria-hidden': 'true' });
+    blur.src = img.currentSrc || img.src;
+    box.insertBefore(blur, img);
+    img.style.maxWidth = `${img.naturalWidth}px`;
+    img.style.maxHeight = `${img.naturalHeight}px`;
+    return true;
+  }
+
   const hostOf = (url) => new URL(url).hostname.replace(/^www[.]/, '');
 
   /** Modalın yuxarısında geniş kadr; yoxdursa posterin bulanıq versiyası, o da yoxdursa qradiyent. */
@@ -964,8 +980,12 @@
     }
     if (!film.backdrop) banner.classList.add('modal__banner--blur');
     banner.classList.add('is-loading');
-    const img = h('img', { alt: '', decoding: 'async' });
-    img.addEventListener('load', () => banner.classList.remove('is-loading'), { once: true });
+    const img = h('img', { alt: '', decoding: 'async', class: 'modal__banner-img' });
+    img.style.objectPosition = film.backdropPosition;
+    img.addEventListener('load', () => {
+      if (film.backdrop) fitNarrowImage(banner, img, 'modal__banner--fit');
+      banner.classList.remove('is-loading');
+    }, { once: true });
     img.addEventListener('error', () => {
       banner.replaceChildren();
       banner.className = 'modal__banner modal__banner--art';
