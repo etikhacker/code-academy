@@ -27,7 +27,9 @@ Sonra brauzerdə `http://localhost:8000` ünvanını açın.
 
 ## Film əlavə etmək
 
-`films.js` faylında 33 real Azərbaycan filmi var: 1991-ci ildən əvvəl çəkilmiş 20 və sonra çəkilmiş 13 film. Hər filmin adı, ili və janrı `source` linkindəki Vikipediya məqaləsindən yoxlanılıb, təsvirlər isə öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi kanallardandır ("Azərbaycanfilm" kinostudiyası və filmlərin istehsalçıları). Posterlər hələ əlavə edilməyib.
+`films.js` faylında 33 real Azərbaycan filmi var: 1991-ci ildən əvvəl çəkilmiş 20 və sonra çəkilmiş 13 film. Hər filmin adı, ili və janrı `source` linkindəki Vikipediya məqaləsindən yoxlanılıb, təsvirlər isə öz sözlərimizlə yazılıb. Treylerlər yalnız rəsmi kanallardandır ("Azərbaycanfilm" kinostudiyası və filmlərin istehsalçıları). Şəkillər `posters/` (şaquli poster, ~600px en) və `backdrops/` (filmdən geniş kadr) qovluqlarındadır; hər filmin `imageSource` sahəsində şəklin götürüldüyü səhifə göstərilir.
+
+> **Şəkillərin hüquqi statusu:** posterlərin demək olar hamısı Vikipediyada "ədalətli istifadə" (fair use) statusunda saxlanılan qeyri-azad şəkillərdir, kadrlar isə "Azərbaycanfilm"in rəsmi YouTube önizləmələrindən və treylerlərindən götürülüb. Onlar burada yalnız tədris məqsədilə, filmi tanıtmaq üçün kiçik ölçüdə istifadə olunur. Sayt ictimai yayımlanacaqsa, hüquq sahiblərinin şərtlərini nəzərə alın.
 
 Yeni film əlavə etmək üçün `FILMS` massivinə bu formada obyekt yazın:
 

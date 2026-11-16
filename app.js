@@ -137,6 +137,10 @@
       description: String(item.description ?? '').trim(),
       source: String(item.source ?? '').trim(),
       poster: String(item.poster ?? '').trim(),
+      backdrop: String(item.backdrop ?? '').trim(),
+      // imageSource: bir link və ya linklərin siyahısı (poster və kadr fərqli mənbədəndirsə)
+      imageSource: (Array.isArray(item.imageSource) ? item.imageSource : [item.imageSource])
+        .map((u) => String(u ?? '').trim()).filter(isHttpUrl),
       trailerYoutubeId: YT_ID.test(trailer) ? trailer : '',
       featured: item.featured === true,
       searchKey: normalize(item.title)
@@ -214,6 +218,8 @@
     modalDialog: $('#modal .modal__dialog'),
     modalClose: $('#modalClose'),
     modalPoster: $('#modalPoster'),
+    modalBanner: $('#modalBanner'),
+    modalImageSource: $('#modalImageSource'),
     modalTitle: $('#modalTitle'),
     modalMeta: $('#modalMeta'),
     modalDesc: $('#modalDesc'),
@@ -234,12 +240,11 @@
   function createFallback(film) {
     return h('div', { class: 'poster__fallback', style: paletteOf(film), 'aria-hidden': 'true' },
       film.year ? h('span', { class: 'poster__year', text: String(film.year) }) : null,
-      h('span', { class: 'poster__title', text: film.title }),
-      h('span', { class: 'poster__note', text: 'Poster əlavə edilməyib' })
+      h('span', { class: 'poster__title', text: film.title })
     );
   }
 
-  function createPoster(film, { mini = false, eager = false } = {}) {
+  function createPoster(film, { mini = false, eager = false, defer = false } = {}) {
     const wrap = h('div', { class: mini ? 'poster poster--mini' : 'poster' });
     if (!film.poster) {
       wrap.append(createFallback(film));
@@ -257,7 +262,8 @@
       wrap.classList.remove('is-loading');
       wrap.append(createFallback(film));
     }, { once: true });
-    img.src = film.poster;
+    // defer: src sonra (slayder növbəyə çatanda) veriləcək
+    if (defer) img.dataset.src = film.poster; else img.src = film.poster;
     wrap.append(img);
     return wrap;
   }
@@ -623,19 +629,34 @@
   const slideEls = [];
   const dotEls = [];
 
+  /** Slaydın fonu: kadr (backdrop) → posterin bulanıq versiyası → qradiyent. Şəkil src-i sonra verilir. */
   function heroBackground(film) {
     const bg = h('div', { class: 'hero__bg', 'aria-hidden': 'true' });
-    if (film.poster) {
-      // posterin bulanıq, qaranlıq versiyası
-      const img = h('img', { alt: '', decoding: 'async' });
-      img.addEventListener('error', () => { img.remove(); bg.classList.add('hero__bg--art'); }, { once: true });
-      img.src = film.poster;
+    const src = film.backdrop || film.poster;
+    if (src) {
+      if (!film.backdrop) bg.classList.add('hero__bg--blur');
+      const img = h('img', { alt: '', decoding: 'async', 'data-src': src });
+      img.addEventListener('error', () => {
+        img.hidden = true;
+        bg.classList.remove('hero__bg--blur');
+        bg.classList.add('hero__bg--art');
+        bg.setAttribute('style', paletteOf(film));
+      }, { once: true });
       bg.append(img);
     } else {
       bg.classList.add('hero__bg--art');
       bg.setAttribute('style', paletteOf(film));
     }
     return bg;
+  }
+
+  /** Slaydın şəkillərini yükləməyə başla (aktiv və növbəti slayd üçün çağırılır). */
+  function loadSlideImages(slide) {
+    if (!slide) return;
+    $$('img[data-src]', slide).forEach((img) => {
+      img.src = img.dataset.src;
+      img.removeAttribute('data-src');
+    });
   }
 
   function buildSlide(film, i) {
@@ -647,7 +668,7 @@
     paintListButton(listBtn, film);
 
     const posterBtn = h('button', { type: 'button', class: 'hero__poster anim', style: '--d:2', tabindex: '-1', 'aria-hidden': 'true' },
-      createPoster(film, { eager: i === 0 }));
+      createPoster(film, { eager: true, defer: true }));
     posterBtn.addEventListener('click', () => openModal(film.id, moreBtn));
 
     return h('article', {
@@ -718,6 +739,9 @@
   function goToSlide(i) {
     if (!slideEls.length) return;
     slideIndex = (i + slideEls.length) % slideEls.length;
+    // aktiv və növbəti slaydın şəkillərini əvvəlcədən yüklə ki, keçiddə boşluq olmasın
+    loadSlideImages(slideEls[slideIndex]);
+    loadSlideImages(slideEls[(slideIndex + 1) % slideEls.length]);
     slideEls.forEach((el, k) => {
       const active = k === slideIndex;
       el.classList.toggle('is-active', active);
@@ -778,6 +802,17 @@
     modalOpener = opener || document.activeElement;
 
     els.modalPoster.replaceChildren(createPoster(film, { eager: true }));
+    renderModalBanner(film);
+    if (film.imageSource.length) {
+      els.modalImageSource.hidden = false;
+      els.modalImageSource.replaceChildren('Şəkil mənbəyi: ', ...film.imageSource.flatMap((url, i) => [
+        i ? ', ' : null,
+        h('a', { href: url, target: '_blank', rel: 'noopener noreferrer', text: hostOf(url) })
+      ].filter(Boolean)));
+    } else {
+      els.modalImageSource.hidden = true;
+      els.modalImageSource.replaceChildren();
+    }
     els.modalTitle.textContent = film.title;
     els.modalMeta.replaceChildren(...metaChips(film, { long: true }));
     els.modalDesc.textContent = film.description || 'Təsvir əlavə edilməyib.';
@@ -825,6 +860,33 @@
     if (opener && document.contains(opener)) opener.focus({ preventScroll: true });
 
     modalCloseTimer = setTimeout(() => { els.modal.hidden = true; }, reducedMotion() ? 0 : 320);
+  }
+
+  const hostOf = (url) => new URL(url).hostname.replace(/^www[.]/, '');
+
+  /** Modalın yuxarısında geniş kadr; yoxdursa posterin bulanıq versiyası, o da yoxdursa qradiyent. */
+  function renderModalBanner(film) {
+    const banner = els.modalBanner;
+    banner.className = 'modal__banner';
+    banner.removeAttribute('style');
+    const src = film.backdrop || film.poster;
+    if (!src) {
+      banner.classList.add('modal__banner--art');
+      banner.setAttribute('style', paletteOf(film));
+      banner.replaceChildren();
+      return;
+    }
+    if (!film.backdrop) banner.classList.add('modal__banner--blur');
+    banner.classList.add('is-loading');
+    const img = h('img', { alt: '', decoding: 'async' });
+    img.addEventListener('load', () => banner.classList.remove('is-loading'), { once: true });
+    img.addEventListener('error', () => {
+      banner.replaceChildren();
+      banner.className = 'modal__banner modal__banner--art';
+      banner.setAttribute('style', paletteOf(film));
+    }, { once: true });
+    img.src = src;
+    banner.replaceChildren(img);
   }
 
   function removeTrailer() {
