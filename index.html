@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Ünvanlar # olmadan işləyir (/filmler, /film/{id}). Dərin ünvanlarda nisbi fayl yolları (style.css, posters/...)
+       saytın kökündən oxunsun deyə <base href="/"> qoyulur; faylı birbaşa kompüterdə açanda (file://) qoyulmur. -->
+  <script>
+    if (location.protocol !== 'file:') {
+      var base = document.createElement('base');
+      base.href = '/';
+      document.head.appendChild(base);
+    }
+  </script>
   <title>Netflix Azərbaycan — tədris layihəsi</title>
   <meta name="description" content="Azərbaycan filmləri haqqında qeyri-rəsmi tədris layihəsi. Film izləmə xidməti deyil.">
   <meta name="theme-color" content="#0b0b0f">
@@ -17,7 +26,7 @@
 
   <header class="topbar" id="topbar">
     <div class="topbar__inner">
-      <a class="brand" href="#/" aria-label="Netflix Azərbaycan — əsas səhifə">
+      <a class="brand" href="/" aria-label="Netflix Azərbaycan — əsas səhifə">
         <span class="brand__mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M12.5 9.5v13l10-6.5z" fill="#fff"/></svg>
         </span>
@@ -28,12 +37,12 @@
       </a>
 
       <nav class="mainnav" id="mainnav" aria-label="Əsas naviqasiya">
-        <a class="mainnav__link" href="#/" data-route="home"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Ana səhifə</span></a>
-        <a class="mainnav__link" href="#/filmler" data-route="filmler"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 5v14M16 5v14M3.5 9.5H8m8 0h4.5M3.5 14.5H8m8 0h4.5" stroke="currentColor" stroke-width="2"/></svg><span>Filmlər</span></a>
-        <a class="mainnav__link" href="#/klassikler" data-route="klassikler"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3.5 14.6 9l6 .6-4.5 4 1.3 5.9L12 16.5l-5.4 3 1.3-5.9-4.5-4 6-.6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Klassiklər</span></a>
-        <a class="mainnav__link" href="#/janrlar" data-route="janrlar"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Janrlar</span></a>
-        <a class="mainnav__link" href="#/onillikler" data-route="onillikler"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Onilliklər</span></a>
-        <a class="mainnav__link" href="#/siyahim" data-route="siyahim"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 3.5h12v17l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Siyahım</span></a>
+        <a class="mainnav__link" href="/" data-route="home"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Ana səhifə</span></a>
+        <a class="mainnav__link" href="/filmler" data-route="filmler"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 5v14M16 5v14M3.5 9.5H8m8 0h4.5M3.5 14.5H8m8 0h4.5" stroke="currentColor" stroke-width="2"/></svg><span>Filmlər</span></a>
+        <a class="mainnav__link" href="/klassikler" data-route="klassikler"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3.5 14.6 9l6 .6-4.5 4 1.3 5.9L12 16.5l-5.4 3 1.3-5.9-4.5-4 6-.6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Klassiklər</span></a>
+        <a class="mainnav__link" href="/janrlar" data-route="janrlar"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Janrlar</span></a>
+        <a class="mainnav__link" href="/onillikler" data-route="onillikler"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Onilliklər</span></a>
+        <a class="mainnav__link" href="/siyahim" data-route="siyahim"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 3.5h12v17l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Siyahım</span></a>
       </nav>
 
       <div class="topbar__filters" id="filters">
@@ -60,12 +69,12 @@
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
           <span class="pick-btn__label">Mənə film seç</span>
         </button>
-        <a class="mylist-link" href="#/siyahim" title="Siyahım">
+        <a class="mylist-link" href="/siyahim" title="Siyahım">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 3.5h12v17l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
           <span class="mylist-link__label">Siyahım</span>
           <span class="badge" id="listCount" aria-label="0 film">0</span>
         </a>
-        <a class="avatar-link" id="avatarLink" href="#/profil" aria-label="Profil" title="Profil">
+        <a class="avatar-link" id="avatarLink" href="/profil" aria-label="Profil" title="Profil">
           <span class="avatar avatar--sm" id="headerAvatar" aria-hidden="true">🎬</span>
         </a>
       </div>

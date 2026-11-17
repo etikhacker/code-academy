@@ -496,7 +496,7 @@
   const sectionDefs = [
     {
       key: 'top',
-      more: '#/filmler',
+      more: '/filmler',
       id: 'top10',
       title: 'Redaksiyanın seçimi',
       note: 'Top 10',
@@ -506,7 +506,7 @@
     },
     {
       key: 'all',
-      more: '#/filmler',
+      more: '/filmler',
       id: 'kino',
       title: 'Azərbaycan kinosu',
       source: () => films,
@@ -514,7 +514,7 @@
     },
     {
       key: 'classics',
-      more: '#/klassikler',
+      more: '/klassikler',
       id: 'klassikler',
       title: 'Klassiklər',
       note: `${CLASSIC_BEFORE}-ci ilə qədər çəkilmiş filmlər`,
@@ -523,7 +523,7 @@
     },
     {
       key: 'mylist',
-      more: '#/siyahim',
+      more: '/siyahim',
       id: 'siyahim',
       title: 'Siyahım',
       note: 'Siyahı yalnız bu brauzerdə saxlanılır.',
@@ -1041,10 +1041,10 @@
     void els.modal.offsetWidth; // keçid animasiyası üçün
     els.modal.classList.add('is-open');
     els.modalClose.focus({ preventScroll: true });
-    // paylaşmaq üçün ünvan: #/film/{id}; "geri" düyməsi modalı bağlayır
-    const filmHash = `#/film/${encodeURIComponent(film.id)}`;
-    if (!fromRouter && location.hash !== filmHash) {
-      history.pushState({ film: film.id }, '', filmHash);
+    // paylaşmaq üçün ünvan: /film/{id}; "geri" düyməsi modalı bağlayır
+    const filmPath = `/film/${encodeURIComponent(film.id)}`;
+    if (!fromRouter && currentPath() !== filmPath) {
+      setUrl(filmPath, { state: { film: film.id } });
       pushedFilmState = true;
     }
     document.title = `${film.title}${film.year ? ` (${film.year})` : ''} — ${SITE_NAME}`;
@@ -1064,9 +1064,9 @@
 
     modalCloseTimer = setTimeout(() => { els.modal.hidden = true; }, reducedMotion() ? 0 : 320);
 
-    if (!fromRouter && parseHash(location.hash).name === 'film') {
+    if (!fromRouter && parsePath(currentPath()).name === 'film') {
       if (pushedFilmState) history.back();
-      else history.replaceState(null, '', baseHash);
+      else setUrl(basePath, { replace: true });
     }
     pushedFilmState = false;
     setDocumentTitle(currentBase);
@@ -1354,7 +1354,7 @@
   let searchTimer = 0;
   // Profil səhifəsində film siyahısı yoxdur — axtarış/janr Filmlər səhifəsində göstərilir
   const leaveProfileForResults = () => {
-    if (currentBase && currentBase.name === 'profil') location.hash = '#/filmler';
+    if (currentBase && currentBase.name === 'profil') navigate('/filmler');
   };
   els.search.addEventListener('input', () => {
     leaveProfileForResults();
@@ -1442,7 +1442,9 @@
 
   /* =========================================================
      Səhifələr və hash routing
-     #/ · #/filmler · #/klassikler · #/janrlar · #/janr/{ad} · #/onillikler · #/siyahim · #/profil · #/film/{id}
+     / · /filmler · /klassikler · /janrlar · /janr/{ad} · /onillikler · /siyahim · /profil · /film/{id}
+     Ünvanlarda # yoxdur (History API). Server bütün belə ünvanlarda index.html verməlidir (vercel.json).
+     Köhnə #/... linkləri avtomatik yeni ünvana keçirilir. Fayl birbaşa açılanda (file://) # ilə işləyir.
      ========================================================= */
   const SITE_NAME = 'Netflix Azərbaycan';
   const PAGE_TITLES = {
@@ -1452,15 +1454,44 @@
   const viewHome = $('#viewHome');
   const viewPage = $('#viewPage');
   let currentBase = null;   // hazırda göstərilən səhifə (film modalı onun üstündə açılır)
-  let baseHash = '#/';
+  let basePath = '/';
   let currentPage = null;   // { key, update }
   let pushedFilmState = false;
-  const LEGACY = { siyahim: '#/siyahim', kino: '#/filmler', klassikler: '#/klassikler', top: '#/', top10: '#/', onilliklar: '#/onillikler' };
+  // köhnə səhifədaxili lövbərlər (#siyahim və s.)
+  const LEGACY = { siyahim: '/siyahim', kino: '/filmler', klassikler: '/klassikler', top: '/', top10: '/', onilliklar: '/onillikler' };
 
-  function parseHash(hash) {
-    const raw = String(hash || '').replace(/^#/, '');
-    if (!raw || raw === '/') return { name: 'home' };
-    if (!raw.startsWith('/')) return { name: 'legacy', anchor: raw };
+  /* --- Ünvan: # olmadan; yalnız faylı birbaşa açanda (file://) # rejimi --- */
+  const HASH_MODE = location.protocol === 'file:';
+  const currentPath = () => (HASH_MODE ? (location.hash.replace(/^#/, '') || '/') : location.pathname) || '/';
+
+  function setUrl(path, { replace = false, state = null } = {}) {
+    const url = HASH_MODE ? `#${path}` : path;
+    if (replace) history.replaceState(state, '', url); else history.pushState(state, '', url);
+  }
+
+  function navigate(path, { replace = false } = {}) {
+    if (path !== currentPath()) setUrl(path, { replace });
+    route();
+  }
+
+  /** Köhnə #/... və #siyahim linklərini yeni ünvana keçirir. true — keçirildi. */
+  function upgradeLegacyHash() {
+    if (HASH_MODE) return false;
+    const hash = location.hash.replace(/^#/, '');
+    if (!hash) return false;
+    let target = null;
+    if (hash.startsWith('/')) target = hash;
+    else if (LEGACY[hash]) target = LEGACY[hash];
+    if (!target) return false; // adi lövbər (məs. #main)
+    history.replaceState(null, '', target);
+    return true;
+  }
+
+  function parsePath(path) {
+    const raw = String(path || '/');
+    if (!raw || raw === '/' || raw === '/index.html') return { name: 'home' };
+    // fayl rejimində (#) adi lövbər, məs. #main
+    if (!raw.startsWith('/')) return LEGACY[raw] ? parsePath(LEGACY[raw]) : { name: 'anchor' };
     let parts;
     try { parts = raw.slice(1).split('/').filter(Boolean).map(decodeURIComponent); } catch { return { name: 'notfound' }; }
     const [a, b] = parts;
@@ -1587,7 +1618,7 @@
           const cover = inGenre.find((f) => f.backdrop) || inGenre.find((f) => f.poster);
           const img = cover ? h('img', { src: cover.backdrop || cover.poster, alt: '', loading: 'lazy', decoding: 'async' }) : null;
           return h('li', {},
-            h('a', { class: `genre-card${state.genre === g ? ' is-active' : ''}`, href: `#/janr/${encodeURIComponent(g)}`, style: paletteOf({ id: g }) },
+            h('a', { class: `genre-card${state.genre === g ? ' is-active' : ''}`, href: `/janr/${encodeURIComponent(g)}`, style: paletteOf({ id: g }) },
               img,
               h('span', { class: 'genre-card__name', text: g }),
               h('span', { class: 'genre-card__count', text: state.query ? `${shown} / ${inGenre.length} film` : filmWord(inGenre.length) })));
@@ -1631,11 +1662,11 @@
       h('p', { class: 'notfound__code', text: '404' }),
       h('h1', { class: 'page__title', id: 'pageTitle', text: 'Səhifə tapılmadı' }),
       h('p', { text: 'Axtardığınız səhifə mövcud deyil və ya köçürülüb.' }),
-      h('a', { class: 'btn btn--primary btn--lg', href: '#/', text: 'Ana səhifəyə qayıt' })));
+      h('a', { class: 'btn btn--primary btn--lg', href: '/', text: 'Ana səhifəyə qayıt' })));
     return { key: 'notfound', update() {} };
   }
 
-  /* --- Profil səhifəsi (#/profil) --- */
+  /* --- Profil səhifəsi (/profil) --- */
   function profileSection({ id, title, more = null, note = null }) {
     const count = h('span', { class: 'row-count' });
     const noteEl = note ? h('p', { class: 'row-note' }) : null;
@@ -1787,7 +1818,7 @@
 
     /* 3. Bölmələr */
     const recent = profileSection({ id: 'son-baxdiqlarim', title: 'Son baxdıqlarım' });
-    const shortList = profileSection({ id: 'profil-siyahim', title: 'Siyahım', more: '#/siyahim' });
+    const shortList = profileSection({ id: 'profil-siyahim', title: 'Siyahım', more: '/siyahim' });
     const forYou = profileSection({ id: 'senin-ucun', title: 'Sənin üçün', note: true });
 
     /* 4. Parametrlər */
@@ -1916,7 +1947,7 @@
         recent.show(seenFilms.slice(0, RECENT_COUNT), [
           h('strong', { text: 'Hələ heç bir filmə baxmamısınız.' }),
           h('p', { text: 'Film kartına basın — açdığınız filmlər burada görünəcək.' }),
-          h('a', { class: 'btn btn--primary', href: '#/filmler', text: 'Filmlərə bax' })]);
+          h('a', { class: 'btn btn--primary', href: '/filmler', text: 'Filmlərə bax' })]);
         shortList.show(listFilms.slice(0, SHORT_LIST_COUNT), [
           h('strong', { text: 'Siyahınız hələ boşdur' }),
           h('p', { text: 'Filmin kartındakı “+” düyməsinə basın — film burada görünəcək.' })]);
@@ -1951,7 +1982,7 @@
           emptyAll: () => ({
             title: 'Siyahınız hələ boşdur',
             text: 'Bəyəndiyiniz filmin kartındakı “+” düyməsinə və ya filmin pəncərəsindəki “Siyahıma əlavə et” düyməsinə basın — film burada görünəcək.',
-            link: { href: '#/filmler', text: 'Filmlərə bax' }
+            link: { href: '/filmler', text: 'Filmlərə bax' }
           }) });
       case 'janr':
         return gridPage({ key: `janr/${r.genre}`, title: r.genre, kicker: 'Janr',
@@ -1968,7 +1999,7 @@
     if (currentBase && routeKey(currentBase) === key) return; // eyni səhifə — yenidən çəkmə
     const first = !currentBase;
     currentBase = r;
-    baseHash = r.name === 'home' ? '#/' : `#/${r.name === 'janr' ? `janr/${encodeURIComponent(r.genre)}` : r.name}`;
+    basePath = r.name === 'home' ? '/' : `/${r.name === 'janr' ? `janr/${encodeURIComponent(r.genre)}` : r.name}`;
     const isHome = r.name === 'home';
     viewHome.hidden = !isHome;
     viewPage.hidden = isHome;
@@ -1988,12 +2019,10 @@
   }
 
   function route() {
-    const r = parseHash(location.hash);
-    if (r.name === 'legacy') {
-      const target = LEGACY[r.anchor];
-      if (target) { history.replaceState(null, '', target); route(); }
-      return; // səhifədaxili lövbər (məs. #main) — marşrut deyil
-    }
+    upgradeLegacyHash();
+    if (!HASH_MODE && location.pathname === '/index.html') history.replaceState(null, '', '/' + location.hash);
+    const r = parsePath(currentPath());
+    if (r.name === 'anchor') { if (!currentBase) showBase({ name: 'home' }); return; }
     if (r.name === 'janr' && !genres.includes(r.genre)) { showBase({ name: 'notfound' }); return; }
     if (r.name === 'film') {
       if (!filmById.has(r.id)) { closeModal({ fromRouter: true }); showBase({ name: 'notfound' }); return; }
@@ -2007,7 +2036,19 @@
     showBase(r);
   }
 
-  window.addEventListener('hashchange', route);
+  window.addEventListener('popstate', route);
+  window.addEventListener('hashchange', () => { if (HASH_MODE || upgradeLegacyHash()) route(); });
+
+  // Saytdaxili linklər səhifəni yenidən yükləmədən açılsın
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest('a[href]');
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    const href = a.getAttribute('href');
+    if (!href.startsWith('/') || href.startsWith('//')) return;
+    e.preventDefault();
+    navigate(href);
+  });
   // "Məzmuna keç" linki hash-i dəyişmədən fokusu əsas hissəyə köçürür
   $('.skip-link').addEventListener('click', (e) => {
     e.preventDefault();
