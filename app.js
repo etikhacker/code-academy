@@ -1997,7 +1997,8 @@
     if (r.name === 'janr' && !genres.includes(r.genre)) { showBase({ name: 'notfound' }); return; }
     if (r.name === 'film') {
       if (!filmById.has(r.id)) { closeModal({ fromRouter: true }); showBase({ name: 'notfound' }); return; }
-      if (!currentBase) showBase({ name: 'home' });
+      // film pəncərəsi 404 səhifəsinin üstündə açılmasın — arxada ana səhifə olsun
+      if (!currentBase || currentBase.name === 'notfound') showBase({ name: 'home' });
       if (modalFilmId !== r.id) openModal(r.id, null, { fromRouter: true });
       return;
     }
