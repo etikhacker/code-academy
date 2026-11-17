@@ -65,6 +65,9 @@
           <span class="mylist-link__label">Siyahım</span>
           <span class="badge" id="listCount" aria-label="0 film">0</span>
         </a>
+        <a class="avatar-link" id="avatarLink" href="#/profil" aria-label="Profil" title="Profil">
+          <span class="avatar avatar--sm" id="headerAvatar" aria-hidden="true">🎬</span>
+        </a>
       </div>
     </div>
   </header>
@@ -87,7 +90,7 @@
     <!-- Bütün sıralar app.js tərəfindən yaradılır -->
     <div class="rows" id="rows"></div>
     </div>
-    <!-- Ana səhifədən başqa səhifələr (Filmlər, Klassiklər, Janrlar, Onilliklər, Siyahım) app.js tərəfindən buraya çəkilir -->
+    <!-- Ana səhifədən başqa səhifələr (Filmlər, Klassiklər, Janrlar, Onilliklər, Siyahım, Profil) app.js tərəfindən buraya çəkilir -->
     <div class="view page" id="viewPage" hidden></div>
   </main>
 
@@ -142,6 +145,19 @@
       </div>
       <div class="modal__video" id="modalVideo" hidden></div>
       <p class="modal__imgsrc" id="modalImageSource" hidden></p>
+    </div>
+  </div>
+
+  <!-- Təsdiq pəncərəsi (Profil parametrləri üçün; brauzerin confirm() pəncərəsi istifadə olunmur) -->
+  <div class="confirm" id="confirm" hidden>
+    <div class="confirm__backdrop" data-confirm-cancel></div>
+    <div class="confirm__dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+      <h2 class="confirm__title" id="confirmTitle"></h2>
+      <p class="confirm__text" id="confirmText"></p>
+      <div class="confirm__actions">
+        <button class="btn btn--secondary" id="confirmCancel" type="button">Ləğv et</button>
+        <button class="btn btn--danger" id="confirmOk" type="button">Təsdiqlə</button>
+      </div>
     </div>
   </div>
 

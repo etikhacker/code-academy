@@ -3,6 +3,8 @@
    Film məlumatları yalnız films.js-dəki FILMS massivindən oxunur.
    Bütün bölmələr (hero, janr sıraları, onilliklər, Top 10, rəqəmlər)
    bu məlumatdan avtomatik yaranır.
+   Profil, Siyahım və baxış tarixçəsi yalnız localStorage-da saxlanılır:
+   hesab, giriş, parol və server yoxdur.
    ========================================================= */
 (() => {
   'use strict';
@@ -18,7 +20,8 @@
   const YT_ID = /^[A-Za-z0-9_-]{11}$/;
 
   const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const reducedMotion = () => motionQuery.matches;
+  // sistem parametri və ya profildəki "Animasiyaları azalt" açarı
+  const reducedMotion = () => motionQuery.matches || profile.reduceMotion;
 
   /* ---------- Köməkçilər ---------- */
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -197,11 +200,126 @@
 
     refreshListState({ pulseId: adding ? id : null, sourceButton });
     renderSection(sectionByKey.mylist);
-    if (currentPage && currentPage.key === 'siyahim') currentPage.update();
+    refreshListPages();
 
     if (!saved) toast('Siyahı bu brauzerdə yadda saxlanıla bilmədi.', 'muted');
     else if (adding) toast(`“${film.title}” siyahıya əlavə edildi`);
     else toast(`“${film.title}” siyahıdan çıxarıldı`, 'muted');
+  }
+
+
+  /** Siyahımdan asılı səhifələr (Siyahım, Profil) dərhal yenilənsin. */
+  function refreshListPages() {
+    if (currentPage && (currentPage.key === 'siyahim' || currentPage.key === 'profil')) currentPage.update();
+  }
+
+  /* ---------- Profil və baxış tarixçəsi (yalnız localStorage, hesab yoxdur) ---------- */
+  const PROFILE_KEY = 'netflixAz.profile';
+  const HISTORY_KEY = 'netflixAz.history';
+  const HISTORY_MAX = 100;
+  const RECENT_COUNT = 10;
+  const SHORT_LIST_COUNT = 6;
+  const FOR_YOU_COUNT = 6;
+  const NAME_MAX = 24;
+  const DEFAULT_NAME = 'Qonaq';
+  const AVATARS = [
+    { icon: '🎬', bg: '#c4101b', label: 'Kino lövhəsi' },
+    { icon: '🍿', bg: '#b45309', label: 'Popkorn' },
+    { icon: '🎭', bg: '#6d28d9', label: 'Teatr maskaları' },
+    { icon: '🎥', bg: '#0369a1', label: 'Kinokamera' },
+    { icon: '⭐', bg: '#0f766e', label: 'Ulduz' },
+    { icon: '🦁', bg: '#9a3412', label: 'Şir' },
+    { icon: '🌙', bg: '#1e3a8a', label: 'Ay' },
+    { icon: '🎧', bg: '#15803d', label: 'Qulaqlıq' }
+  ];
+
+  // localStorage gizli rejimdə, bloklananda və ya dolu olanda xəta ata bilər — sayt yenə işləməlidir
+  const safeStorage = {
+    get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+    set(key, value) { try { localStorage.setItem(key, value); return true; } catch { return false; } },
+    remove(key) { try { localStorage.removeItem(key); return true; } catch { return false; } }
+  };
+  const parseJson = (raw, fallback) => {
+    if (raw == null) return fallback;
+    try { return JSON.parse(raw); } catch { return fallback; }
+  };
+
+  const defaultProfile = () => ({ name: DEFAULT_NAME, avatar: 0, favGenre: '', reduceMotion: false });
+  const cleanName = (value) => String(value ?? '').replace(/\s+/g, ' ').trim();
+  const nameLength = (value) => Array.from(value).length; // emoji 1 simvol sayılsın
+
+  function readProfile() {
+    const saved = parseJson(safeStorage.get(PROFILE_KEY), null);
+    const base = defaultProfile();
+    if (!saved || typeof saved !== 'object') return base;
+    const name = cleanName(saved.name);
+    const avatar = Number(saved.avatar);
+    return {
+      name: name && nameLength(name) <= NAME_MAX ? name : base.name,
+      avatar: Number.isInteger(avatar) && avatar >= 0 && avatar < AVATARS.length ? avatar : base.avatar,
+      favGenre: genres.includes(saved.favGenre) ? saved.favGenre : '',
+      reduceMotion: saved.reduceMotion === true
+    };
+  }
+
+  function readHistory() {
+    const list = parseJson(safeStorage.get(HISTORY_KEY), []);
+    return Array.isArray(list) ? [...new Set(list.map(String))].slice(0, HISTORY_MAX) : [];
+  }
+
+  let profile = readProfile();
+  let viewHistory = readHistory(); // ən yenisi əvvəldə
+  const saveProfile = () => safeStorage.set(PROFILE_KEY, JSON.stringify(profile));
+  const saveHistory = () => safeStorage.set(HISTORY_KEY, JSON.stringify(viewHistory));
+  const isGuest = () => profile.name === DEFAULT_NAME;
+
+  /** Film pəncərəsi açılanda: filmi tarixçənin əvvəlinə keçir (təkrar olmadan). */
+  function recordView(id) {
+    viewHistory = [id, ...viewHistory.filter((x) => x !== id)].slice(0, HISTORY_MAX);
+    saveHistory();
+    if (currentPage && currentPage.key === 'profil') currentPage.update();
+  }
+
+  function avatarEl(index, extraClass = '') {
+    const a = AVATARS[index] || AVATARS[0];
+    return h('span', { class: `avatar${extraClass ? ` ${extraClass}` : ''}`, style: `--av:${a.bg}`, 'aria-hidden': 'true', text: a.icon });
+  }
+
+  /** Profil dəyişəndə: header avatarı, hero salamı, animasiya parametri. */
+  function applyProfile() {
+    document.documentElement.classList.toggle('reduce-motion', profile.reduceMotion);
+    const a = AVATARS[profile.avatar] || AVATARS[0];
+    const headerAvatar = $('#headerAvatar');
+    if (headerAvatar) {
+      headerAvatar.textContent = a.icon;
+      headerAvatar.style.setProperty('--av', a.bg);
+    }
+    const link = $('#avatarLink');
+    if (link) {
+      link.setAttribute('aria-label', `Profil: ${profile.name}`);
+      link.title = `Profil: ${profile.name}`;
+    }
+    $$('[data-hello]').forEach((el) => {
+      el.hidden = isGuest();
+      el.textContent = isGuest() ? '' : `Salam, ${profile.name}!`;
+    });
+  }
+
+  /** Rəqəmi əvvəlki qiymətindən yenisinə animasiya ilə dəyişir. */
+  function animateNumber(el, to) {
+    const from = Number(el.dataset.value || 0);
+    el.dataset.value = String(to);
+    cancelAnimationFrame(Number(el.dataset.raf || 0));
+    if (reducedMotion() || from === to) { el.textContent = String(to); return; }
+    const duration = Math.abs(to - from) > 100 ? 1400 : 800;
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = String(Math.round(from + (to - from) * eased));
+      if (t < 1) el.dataset.raf = String(requestAnimationFrame(step));
+    };
+    el.dataset.raf = String(requestAnimationFrame(step));
   }
 
   /* ---------- Filtr vəziyyəti ---------- */
@@ -713,6 +831,7 @@
       h('div', { class: 'hero__shade', 'aria-hidden': 'true' }),
       h('div', { class: 'hero__inner' },
         h('div', { class: 'hero__content' },
+          h('p', { class: 'hero__hello anim', style: '--d:0', 'data-hello': '', hidden: true }),
           h('p', { class: 'hero__eyebrow anim', style: '--d:0' },
             h('span', { class: 'hero__pin', 'aria-hidden': 'true' }),
             film.featured ? 'Seçilmiş film' : 'Kataloqdan'),
@@ -908,6 +1027,7 @@
     }
     els.modalList.dataset.listId = film.id;
     paintListButton(els.modalList, film);
+    recordView(film.id);
 
     removeTrailer();
     els.modalTrailer.hidden = !film.trailerYoutubeId;
@@ -1042,6 +1162,58 @@
       e.preventDefault();
       first.focus();
     }
+  });
+
+  /* ---------- Təsdiq pəncərəsi (brauzerin confirm() funksiyası əvəzinə) ---------- */
+  const confirmEls = {
+    root: $('#confirm'),
+    title: $('#confirmTitle'),
+    text: $('#confirmText'),
+    ok: $('#confirmOk'),
+    cancel: $('#confirmCancel')
+  };
+  let confirmResolve = null;
+  let confirmOpener = null;
+  const confirmOpen = () => Boolean(confirmResolve);
+
+  function askConfirm({ title, text, okLabel = 'Təsdiqlə' }) {
+    if (confirmResolve) finishConfirm(false);
+    confirmOpener = document.activeElement;
+    confirmEls.title.textContent = title;
+    confirmEls.text.textContent = text;
+    confirmEls.ok.textContent = okLabel;
+    document.body.classList.add('is-locked');
+    backgroundEls.forEach((el) => el && el.setAttribute('inert', ''));
+    confirmEls.root.hidden = false;
+    void confirmEls.root.offsetWidth;
+    confirmEls.root.classList.add('is-open');
+    confirmEls.cancel.focus({ preventScroll: true }); // təhlükəsiz seçim əvvəlcədən fokusda
+    return new Promise((resolve) => { confirmResolve = resolve; });
+  }
+
+  function finishConfirm(ok) {
+    if (!confirmResolve) return;
+    const resolve = confirmResolve;
+    confirmResolve = null;
+    confirmEls.root.classList.remove('is-open');
+    confirmEls.root.hidden = true;
+    if (els.modal.hidden) {
+      document.body.classList.remove('is-locked');
+      backgroundEls.forEach((el) => el && el.removeAttribute('inert'));
+    }
+    const opener = confirmOpener;
+    confirmOpener = null;
+    if (opener && document.contains(opener)) opener.focus({ preventScroll: true });
+    resolve(ok);
+  }
+
+  confirmEls.ok.addEventListener('click', () => finishConfirm(true));
+  confirmEls.cancel.addEventListener('click', () => finishConfirm(false));
+  $('[data-confirm-cancel]').addEventListener('click', () => finishConfirm(false));
+  confirmEls.root.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    e.preventDefault(); // iki düymə arasında qalsın
+    (document.activeElement === confirmEls.ok ? confirmEls.cancel : confirmEls.ok).focus();
   });
 
   /* ---------- Toast ---------- */
@@ -1180,7 +1352,12 @@
   }
 
   let searchTimer = 0;
+  // Profil səhifəsində film siyahısı yoxdur — axtarış/janr Filmlər səhifəsində göstərilir
+  const leaveProfileForResults = () => {
+    if (currentBase && currentBase.name === 'profil') location.hash = '#/filmler';
+  };
   els.search.addEventListener('input', () => {
+    leaveProfileForResults();
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
       state.query = normalize(els.search.value);
@@ -1194,7 +1371,10 @@
       renderAll();
     }
   });
-  els.genre.addEventListener('change', () => setGenre(els.genre.value));
+  els.genre.addEventListener('change', () => {
+    leaveProfileForResults();
+    setGenre(els.genre.value);
+  });
 
   function resetFilters() {
     clearTimeout(searchTimer);
@@ -1233,7 +1413,10 @@
   /* ---------- Klaviatura ---------- */
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (!els.modal.hidden && els.modal.classList.contains('is-open')) {
+    if (confirmOpen()) {
+      e.preventDefault();
+      finishConfirm(false);
+    } else if (!els.modal.hidden && els.modal.classList.contains('is-open')) {
       e.preventDefault();
       closeModal();
     } else if (!els.picker.hidden) {
@@ -1243,22 +1426,28 @@
 
   /* ---------- Başqa tabda dəyişiklik ---------- */
   window.addEventListener('storage', (e) => {
-    if (e.key !== STORAGE_KEY) return;
-    myList = store.read();
-    refreshListState();
-    renderSection(sectionByKey.mylist);
-    if (currentPage) currentPage.update();
+    const all = e.key === null; // localStorage.clear()
+    if (all || e.key === STORAGE_KEY) {
+      myList = store.read();
+      refreshListState();
+      renderSection(sectionByKey.mylist);
+    }
+    if (all || e.key === PROFILE_KEY) { profile = readProfile(); applyProfile(); }
+    if (all || e.key === HISTORY_KEY) viewHistory = readHistory();
+    if (all || [STORAGE_KEY, PROFILE_KEY, HISTORY_KEY].includes(e.key)) {
+      if (currentPage) currentPage.update();
+    }
   });
 
 
   /* =========================================================
      Səhifələr və hash routing
-     #/ · #/filmler · #/klassikler · #/janrlar · #/janr/{ad} · #/onillikler · #/siyahim · #/film/{id}
+     #/ · #/filmler · #/klassikler · #/janrlar · #/janr/{ad} · #/onillikler · #/siyahim · #/profil · #/film/{id}
      ========================================================= */
   const SITE_NAME = 'Netflix Azərbaycan';
   const PAGE_TITLES = {
     home: 'Ana səhifə', filmler: 'Filmlər', klassikler: 'Klassiklər', janrlar: 'Janrlar',
-    onillikler: 'Onilliklər', siyahim: 'Siyahım', notfound: 'Səhifə tapılmadı'
+    onillikler: 'Onilliklər', siyahim: 'Siyahım', profil: 'Profil', notfound: 'Səhifə tapılmadı'
   };
   const viewHome = $('#viewHome');
   const viewPage = $('#viewPage');
@@ -1275,7 +1464,7 @@
     let parts;
     try { parts = raw.slice(1).split('/').filter(Boolean).map(decodeURIComponent); } catch { return { name: 'notfound' }; }
     const [a, b] = parts;
-    if (parts.length === 1 && ['filmler', 'klassikler', 'janrlar', 'onillikler', 'siyahim'].includes(a)) return { name: a };
+    if (parts.length === 1 && ['filmler', 'klassikler', 'janrlar', 'onillikler', 'siyahim', 'profil'].includes(a)) return { name: a };
     if (parts.length === 2 && a === 'janr') return { name: 'janr', genre: b };
     if (parts.length === 2 && a === 'film') return { name: 'film', id: b };
     if (parts.length === 0) return { name: 'home' };
@@ -1297,6 +1486,11 @@
       a.classList.toggle('is-active', on);
       if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
+    const avatarLink = $('#avatarLink');
+    if (avatarLink) {
+      avatarLink.classList.toggle('is-active', r.name === 'profil');
+      if (r.name === 'profil') avatarLink.setAttribute('aria-current', 'page'); else avatarLink.removeAttribute('aria-current');
+    }
   }
 
   /* --- ümumi hissələr --- */
@@ -1441,6 +1635,308 @@
     return { key: 'notfound', update() {} };
   }
 
+  /* --- Profil səhifəsi (#/profil) --- */
+  function profileSection({ id, title, more = null, note = null }) {
+    const count = h('span', { class: 'row-count' });
+    const noteEl = note ? h('p', { class: 'row-note' }) : null;
+    const list = h('ul', { class: 'grid profile__list', 'aria-labelledby': `${id}-title` });
+    const empty = h('div', { class: 'row-empty', hidden: true });
+    const el = h('section', { class: 'profile__section', id, 'aria-labelledby': `${id}-title` },
+      h('div', { class: 'row-head' },
+        h('h2', { class: 'row-title', id: `${id}-title`, text: title }),
+        count,
+        more ? h('a', { class: 'row-more', href: more }, 'Hamısına bax ', h('span', { 'aria-hidden': 'true', text: '→' }),
+          h('span', { class: 'visually-hidden', text: `: ${title}` })) : null,
+        noteEl),
+      list, empty);
+    return {
+      el, count, note: noteEl,
+      show(items, emptyContent) {
+        count.textContent = items.length ? filmWord(items.length) : '';
+        fillGrid(list, items);
+        list.hidden = !items.length;
+        empty.hidden = !!items.length;
+        empty.replaceChildren(...(items.length ? [] : emptyContent));
+      }
+    };
+  }
+
+  function settingRow({ title, text, control, id }) {
+    return h('li', { class: 'setting' },
+      h('div', { class: 'setting__text' },
+        h('p', { class: 'setting__title', id: `${id}-label`, text: title }),
+        text ? h('p', { class: 'setting__note', id: `${id}-note`, text }) : null),
+      control);
+  }
+
+  function profilePage() {
+    const { head } = pageHead('Profil', { note: 'Profil yalnız bu brauzerdə saxlanılır. Hesab və sinxronlaşma yoxdur.' });
+
+    /* 1. Ad və avatar */
+    const bigAvatar = h('span', { class: 'profile__avatar' });
+    const nameEl = h('h2', { class: 'profile__name', id: 'profileName' });
+    const editBtn = h('button', { type: 'button', class: 'btn btn--ghost', 'aria-controls': 'nameForm', 'aria-expanded': 'false' },
+      h('span', { svg: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>' }),
+      h('span', { text: 'Redaktə et' }));
+    const input = h('input', {
+      id: 'nameInput', type: 'text', maxlength: String(NAME_MAX), autocomplete: 'nickname',
+      spellcheck: 'false', enterkeyhint: 'done', 'aria-describedby': 'nameCounter nameError'
+    });
+    const counter = h('span', { class: 'profile__counter', id: 'nameCounter' });
+    const error = h('p', { class: 'profile__error', id: 'nameError', 'aria-live': 'assertive' });
+    const cancelBtn = h('button', { type: 'button', class: 'btn btn--secondary' }, 'Ləğv et');
+    const form = h('form', { class: 'profile__form', id: 'nameForm', hidden: true, novalidate: true },
+      h('label', { class: 'profile__label', for: 'nameInput', text: `Adınız (ən çox ${NAME_MAX} simvol)` }),
+      h('div', { class: 'profile__formrow' },
+        h('span', { class: 'profile__inputwrap' }, input, counter),
+        h('button', { type: 'submit', class: 'btn btn--primary' }, 'Yadda saxla'),
+        cancelBtn),
+      error);
+
+    const updateCounter = () => { counter.textContent = `${nameLength(input.value)}/${NAME_MAX}`; };
+    const setError = (msg) => {
+      error.textContent = msg;
+      if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+    };
+    function openEdit() {
+      form.hidden = false;
+      editBtn.hidden = true;
+      editBtn.setAttribute('aria-expanded', 'true');
+      input.value = profile.name;
+      setError('');
+      updateCounter();
+      input.focus();
+      input.select();
+    }
+    function closeEdit() {
+      form.hidden = true;
+      editBtn.hidden = false;
+      editBtn.setAttribute('aria-expanded', 'false');
+      setError('');
+      editBtn.focus({ preventScroll: true });
+    }
+    editBtn.addEventListener('click', openEdit);
+    cancelBtn.addEventListener('click', closeEdit);
+    input.addEventListener('input', () => { updateCounter(); if (error.textContent) setError(''); });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeEdit(); }
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = cleanName(input.value);
+      if (!name) { setError('Ad boş ola bilməz.'); input.focus(); return; }
+      if (nameLength(name) > NAME_MAX) { setError(`Ad ən çox ${NAME_MAX} simvol ola bilər.`); input.focus(); return; }
+      profile.name = name;
+      persistProfile('Ad yadda saxlanıldı');
+      closeEdit();
+    });
+
+    const avatarGroup = h('div', { class: 'avatar-choices', role: 'group', 'aria-labelledby': 'avatarTitle' },
+      AVATARS.map((a, i) => h('button', {
+        type: 'button', class: 'avatar-choice', 'data-avatar': String(i), 'aria-label': a.label, title: a.label,
+        onclick: () => {
+          if (profile.avatar === i) return;
+          profile.avatar = i;
+          persistProfile('Avatar dəyişdirildi');
+        }
+      }, avatarEl(i))));
+
+    const genreSel = h('select', { id: 'favGenre', 'aria-describedby': 'favGenreNote' },
+      h('option', { value: '', text: 'Seçilməyib' }),
+      genres.map((g) => h('option', { value: g, text: g })));
+    genreSel.addEventListener('change', () => {
+      profile.favGenre = genreSel.value;
+      persistProfile(genreSel.value ? `Sevimli janr: ${genreSel.value}` : 'Sevimli janr silindi');
+    });
+
+    const identity = h('section', { class: 'profile__card', 'aria-labelledby': 'profileName' },
+      h('div', { class: 'profile__who' },
+        bigAvatar,
+        h('div', { class: 'profile__whotext' },
+          h('p', { class: 'profile__kicker', text: 'Bu brauzerin profili' }),
+          nameEl,
+          editBtn,
+          form)),
+      h('div', { class: 'profile__prefs' },
+        h('div', { class: 'profile__pref' },
+          h('p', { class: 'profile__label', id: 'avatarTitle', text: 'Avatar' }),
+          avatarGroup),
+        h('div', { class: 'profile__pref' },
+          h('label', { class: 'profile__label', for: 'favGenre', text: 'Sevimli janr' }),
+          h('span', { class: 'field page__sort profile__genre' }, genreSel),
+          h('p', { class: 'profile__hint', id: 'favGenreNote', text: 'Seçsəniz, aşağıda “Sənin üçün” bölməsi görünəcək.' }))));
+
+    /* 2. Statistika */
+    const statDefs = [
+      { key: 'list', label: 'Siyahımdakı film sayı' },
+      { key: 'seen', label: 'Baxılan (açılan) film sayı' },
+      { key: 'genre', label: 'Siyahımda ən çox olan janr' },
+      { key: 'oldest', label: 'Siyahımdakı ən köhnə film' }
+    ];
+    const statEls = {};
+    const statsEl = h('section', { class: 'stats profile__stats is-visible', 'aria-labelledby': 'profileStatsTitle' },
+      h('div', { class: 'stats__head' },
+        h('h2', { class: 'stats__title', id: 'profileStatsTitle' }, 'Sənin ', h('span', { text: 'statistikan' }))),
+      h('ul', { class: 'stats__grid' },
+        statDefs.map((d, i) => {
+          const value = h('span', { class: `stat__value${d.key === 'genre' ? ' stat__value--text' : ''}`, 'data-stat': d.key, text: d.key === 'genre' ? '—' : '0' });
+          const sub = h('span', { class: 'stat__sub' });
+          statEls[d.key] = { value, sub };
+          return h('li', { class: 'stat', style: `--i:${i}` }, value, h('span', { class: 'stat__label', text: d.label }), sub);
+        })));
+
+    /* 3. Bölmələr */
+    const recent = profileSection({ id: 'son-baxdiqlarim', title: 'Son baxdıqlarım' });
+    const shortList = profileSection({ id: 'profil-siyahim', title: 'Siyahım', more: '#/siyahim' });
+    const forYou = profileSection({ id: 'senin-ucun', title: 'Sənin üçün', note: true });
+
+    /* 4. Parametrlər */
+    const motionSwitch = h('button', {
+      type: 'button', class: 'switch', role: 'switch', id: 'motionSwitch',
+      'aria-labelledby': 'motion-label', 'aria-describedby': 'motion-note'
+    }, h('span', { class: 'switch__thumb', 'aria-hidden': 'true' }));
+    motionSwitch.addEventListener('click', () => {
+      profile.reduceMotion = !profile.reduceMotion;
+      persistProfile(profile.reduceMotion ? 'Animasiyalar azaldıldı' : 'Animasiyalar bərpa olundu');
+    });
+    const settingsTitle = h('h2', { class: 'row-title', id: 'settingsTitle', tabindex: '-1', text: 'Parametrlər' });
+    const clearHistoryBtn = h('button', { type: 'button', class: 'btn btn--secondary', 'aria-describedby': 'clear-history-note' }, 'Son baxdıqlarımı təmizlə');
+    const clearListBtn = h('button', { type: 'button', class: 'btn btn--secondary', 'aria-describedby': 'clear-list-note' }, 'Siyahımı təmizlə');
+    const resetBtn = h('button', { type: 'button', class: 'btn btn--danger', 'aria-describedby': 'reset-note' }, 'Profili sıfırla');
+    // əməliyyatdan sonra düymə söndürülürsə, fokus itməsin
+    const keepFocus = (btn) => { if (btn.disabled) settingsTitle.focus({ preventScroll: true }); };
+
+    clearHistoryBtn.addEventListener('click', async () => {
+      const ok = await askConfirm({
+        title: 'Son baxdıqlarım təmizlənsin?',
+        text: 'Açdığınız filmlərin siyahısı bu brauzerdən silinəcək. Siyahım və profil dəyişməyəcək.',
+        okLabel: 'Təmizlə'
+      });
+      if (!ok) return;
+      viewHistory = [];
+      const saved = safeStorage.remove(HISTORY_KEY);
+      page.update();
+      keepFocus(clearHistoryBtn);
+      toast(saved ? 'Son baxdıqlarım təmizləndi' : 'Bu brauzerdə yaddaş əlçatan deyil.', 'muted');
+    });
+    clearListBtn.addEventListener('click', async () => {
+      const n = myList.filter((id) => filmById.has(id)).length;
+      const ok = await askConfirm({
+        title: 'Siyahım təmizlənsin?',
+        text: `Siyahımdakı ${filmWord(n)} silinəcək. Bunu geri qaytarmaq olmaz.`,
+        okLabel: 'Siyahımı təmizlə'
+      });
+      if (!ok) return;
+      myList = [];
+      const saved = store.write(myList);
+      refreshListState();
+      renderSection(sectionByKey.mylist);
+      page.update();
+      keepFocus(clearListBtn);
+      toast(saved ? 'Siyahım təmizləndi' : 'Bu brauzerdə yaddaş əlçatan deyil.', 'muted');
+    });
+    resetBtn.addEventListener('click', async () => {
+      const ok = await askConfirm({
+        title: 'Profil sıfırlansın?',
+        text: 'Ad, avatar, sevimli janr və “Animasiyaları azalt” parametri ilkin vəziyyətə qayıdacaq. Siyahım və son baxdıqlarım silinmir.',
+        okLabel: 'Sıfırla'
+      });
+      if (!ok) return;
+      profile = defaultProfile();
+      safeStorage.remove(PROFILE_KEY);
+      if (!form.hidden) { form.hidden = true; editBtn.hidden = false; editBtn.setAttribute('aria-expanded', 'false'); }
+      applyProfile();
+      page.update();
+      keepFocus(resetBtn);
+      toast('Profil sıfırlandı', 'muted');
+    });
+
+    const settings = h('section', { class: 'profile__section profile__settings', 'aria-labelledby': 'settingsTitle' },
+      h('div', { class: 'row-head' }, settingsTitle),
+      h('ul', { class: 'settings' },
+        settingRow({ id: 'motion', title: 'Animasiyaları azalt', control: motionSwitch,
+          text: 'Slayd keçidləri, kartların görünməsi və sayğaclar animasiyasız olacaq.' }),
+        settingRow({ id: 'clear-history', title: 'Son baxdıqlarım', control: clearHistoryBtn,
+          text: 'Açdığınız filmlərin tarixçəsini silir.' }),
+        settingRow({ id: 'clear-list', title: 'Siyahım', control: clearListBtn,
+          text: 'Siyahımdakı bütün filmləri çıxarır.' }),
+        settingRow({ id: 'reset', title: 'Profil', control: resetBtn,
+          text: 'Ad, avatar, sevimli janr və parametrləri ilkin vəziyyətə qaytarır.' })));
+
+    viewPage.replaceChildren(head, identity, statsEl, recent.el, shortList.el, forYou.el, settings);
+
+    function persistProfile(message) {
+      const saved = saveProfile();
+      applyProfile();
+      page.update();
+      toast(saved ? message : 'Profil bu brauzerdə yadda saxlanıla bilmədi.', saved ? '' : 'muted');
+    }
+
+    const page = {
+      key: 'profil',
+      update() {
+        const a = AVATARS[profile.avatar] || AVATARS[0];
+        bigAvatar.replaceChildren(avatarEl(profile.avatar, 'avatar--lg'));
+        nameEl.textContent = profile.name;
+        $$('.avatar-choice', avatarGroup).forEach((b) => {
+          const on = Number(b.dataset.avatar) === profile.avatar;
+          b.classList.toggle('is-active', on);
+          b.setAttribute('aria-pressed', String(on));
+        });
+        bigAvatar.title = a.label;
+        genreSel.value = profile.favGenre;
+        motionSwitch.setAttribute('aria-checked', String(profile.reduceMotion));
+
+        const listFilms = myList.slice().reverse().map((id) => filmById.get(id)).filter(Boolean);
+        const seenFilms = viewHistory.map((id) => filmById.get(id)).filter(Boolean);
+
+        // statistika
+        animateNumber(statEls.list.value, listFilms.length);
+        statEls.list.sub.textContent = listFilms.length ? '' : 'Siyahı boşdur';
+        animateNumber(statEls.seen.value, seenFilms.length);
+        statEls.seen.sub.textContent = seenFilms.length ? `Sonuncu: ${seenFilms[0].title}` : 'Hələ film açılmayıb';
+
+        const byGenre = new Map();
+        listFilms.forEach((f) => { if (f.genre) byGenre.set(f.genre, (byGenre.get(f.genre) || 0) + 1); });
+        const topGenre = [...byGenre].sort((x, y) => y[1] - x[1] || compareAz(x[0], y[0]))[0];
+        statEls.genre.value.textContent = topGenre ? topGenre[0] : '—';
+        statEls.genre.sub.textContent = topGenre ? `${filmWord(topGenre[1])} Siyahımda` : 'Siyahı boşdur';
+
+        const oldest = listFilms.filter((f) => f.year !== null).sort((x, y) => x.year - y.year)[0];
+        if (oldest) {
+          animateNumber(statEls.oldest.value, oldest.year);
+          statEls.oldest.sub.textContent = oldest.title;
+        } else {
+          statEls.oldest.value.dataset.value = '0';
+          statEls.oldest.value.textContent = '—';
+          statEls.oldest.sub.textContent = 'Siyahı boşdur';
+        }
+
+        // bölmələr
+        recent.show(seenFilms.slice(0, RECENT_COUNT), [
+          h('strong', { text: 'Hələ heç bir filmə baxmamısınız.' }),
+          h('p', { text: 'Film kartına basın — açdığınız filmlər burada görünəcək.' }),
+          h('a', { class: 'btn btn--primary', href: '#/filmler', text: 'Filmlərə bax' })]);
+        shortList.show(listFilms.slice(0, SHORT_LIST_COUNT), [
+          h('strong', { text: 'Siyahınız hələ boşdur' }),
+          h('p', { text: 'Filmin kartındakı “+” düyməsinə basın — film burada görünəcək.' })]);
+        shortList.count.textContent = listFilms.length ? filmWord(listFilms.length) : '';
+
+        forYou.el.hidden = !profile.favGenre;
+        if (profile.favGenre) {
+          forYou.note.textContent = `Sevimli janrınız: ${profile.favGenre} — Siyahımda olmayan filmlər`;
+          forYou.show(films.filter((f) => f.genre === profile.favGenre && !isInList(f.id)).slice(0, FOR_YOU_COUNT), [
+            h('strong', { text: 'Bu janrın bütün filmləri artıq Siyahımdadır.' }),
+            h('p', { text: 'Başqa sevimli janr seçə bilərsiniz.' })]);
+        }
+
+        clearHistoryBtn.disabled = !viewHistory.length;
+        clearListBtn.disabled = !myList.length;
+      }
+    };
+    return page;
+  }
+
   function buildPage(r) {
     switch (r.name) {
       case 'filmler':
@@ -1462,6 +1958,7 @@
           source: () => films.filter((f) => f.genre === r.genre), emptyAll: () => ({ title: 'Bu janrda film yoxdur' }) });
       case 'janrlar': return genresPage();
       case 'onillikler': return decadesPage();
+      case 'profil': return profilePage();
       default: return notFoundPage();
     }
   }
@@ -1519,6 +2016,7 @@
   /* ---------- Başlanğıc ---------- */
   populateGenres();
   buildHero();
+  applyProfile();
   renderAll();
   refreshListState();
   updateHeader();

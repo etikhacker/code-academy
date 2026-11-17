@@ -138,6 +138,12 @@ ul { margin: 0; padding: 0; list-style: none; }
 .btn--ghost::before { background: rgba(255, 255, 255, 0.1); }
 .btn--ghost:hover::before { opacity: 1; }
 .btn[disabled] { opacity: 0.6; cursor: progress; }
+.btn--danger { background: transparent; color: #ff6b72; box-shadow: inset 0 0 0 1px rgba(229, 9, 20, 0.65); }
+.btn--danger::before { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1; background: var(--red); opacity: 0; transition: opacity 0.2s; }
+.btn--danger:hover { color: #fff; }
+.btn--danger:hover::before { opacity: 1; }
+.confirm .btn--danger { background: var(--red); color: #fff; box-shadow: none; }
+.confirm .btn--danger::before { background: var(--red-hover); }
 
 .icon-btn {
   display: inline-grid;
@@ -386,9 +392,38 @@ ul { margin: 0; padding: 0; list-style: none; }
   .brand { gap: 8px; }
   .mylist-link { padding: 0 4px 0 8px; gap: 5px; }
 }
-@media (max-width: 379.98px) {
+/* Telefonda avatar da sığsın deyə Siyahım yalnız ikon + sayğac */
+@media (max-width: 479.98px) {
   .mylist-link__label { display: none; }
 }
+
+/* ---------- Avatar (header və profil) ---------- */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.28), transparent 55%), var(--av, var(--red));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  font-size: 1.25rem;
+  line-height: 1;
+  user-select: none;
+}
+.avatar--sm { width: 36px; height: 36px; font-size: 1.1rem; }
+.avatar--lg { width: clamp(76px, 18vw, 104px); height: clamp(76px, 18vw, 104px); font-size: clamp(2.2rem, 6vw, 3rem); }
+.avatar-link {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out);
+}
+.avatar-link:hover { transform: scale(1.06); }
+.avatar-link:active { transform: scale(0.94); }
+.avatar-link.is-active .avatar { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #fff; }
 @keyframes dropIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
 /* ---------- Hero slayder ---------- */
@@ -1425,6 +1460,162 @@ ul { margin: 0; padding: 0; list-style: none; }
 .notfound { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 40px 0; }
 .notfound__code { font-size: clamp(4rem, 14vw, 8rem); font-weight: 800; line-height: 0.9; color: transparent; -webkit-text-stroke: 2px var(--red); }
 
+/* ---------- Profil (#/profil) ---------- */
+.profile__card {
+  display: grid;
+  gap: 22px;
+  padding: clamp(18px, 3vw, 28px);
+  border-radius: 16px;
+  background:
+    radial-gradient(70% 120% at 100% 0%, rgba(229, 9, 20, 0.16), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+@media (min-width: 1000px) { .profile__card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+.profile__who { display: flex; align-items: flex-start; gap: 18px; min-width: 0; }
+.profile__whotext { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; flex: 1; }
+.profile__kicker { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #ff5a62; }
+.profile__name { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; overflow-wrap: anywhere; max-width: 100%; }
+.profile__form { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.profile__form[hidden] { display: none; }
+.profile__formrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.profile__inputwrap { position: relative; display: flex; flex: 1 1 200px; min-width: 0; }
+.profile__inputwrap input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 58px 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(11, 11, 15, 0.7);
+  color: #fff;
+  font: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.profile__inputwrap input:focus { outline: none; box-shadow: inset 0 0 0 2px #fff; }
+.profile__inputwrap input[aria-invalid="true"] { box-shadow: inset 0 0 0 2px var(--red); }
+.profile__counter { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.78rem; font-variant-numeric: tabular-nums; pointer-events: none; }
+.profile__error { min-height: 1.2em; color: #ff6b72; font-size: 0.88rem; font-weight: 600; }
+.profile__error:empty { min-height: 0; }
+.profile__label { display: block; margin-bottom: 8px; color: #d4d4de; font-size: 0.88rem; font-weight: 600; }
+.profile__form .profile__label { margin-bottom: 0; }
+.profile__prefs { display: grid; gap: 18px; min-width: 0; }
+.profile__hint { margin-top: 6px; color: var(--muted); font-size: 0.82rem; }
+.profile__genre { display: flex; }
+.profile__genre select { width: 100%; max-width: 320px; }
+.avatar-choices { display: flex; flex-wrap: wrap; gap: 10px; }
+.avatar-choice {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 50px; height: 50px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  transition: transform 0.2s var(--ease-out);
+}
+.avatar-choice .avatar { width: 46px; height: 46px; font-size: 1.35rem; }
+.avatar-choice:hover { transform: scale(1.08); }
+.avatar-choice.is-active .avatar { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #fff; }
+.avatar-choice.is-active::after {
+  content: "✓";
+  position: absolute; right: -2px; bottom: -2px;
+  display: grid; place-items: center;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #fff; color: #000;
+  font-size: 0.7rem; font-weight: 800;
+}
+.profile__stats { margin: 22px 0 6px; }
+.stat__value--text { font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.15; overflow-wrap: anywhere; }
+.stat__sub { color: #d4d4de; font-size: 0.82rem; overflow-wrap: anywhere; }
+.stat__sub:empty { display: none; }
+.profile__section { margin-top: 26px; }
+.profile__section[hidden] { display: none; }
+.profile__section .row-head { margin-bottom: 10px; }
+.profile__list { margin-top: 4px; }
+.profile__settings .row-title:focus { outline: none; }
+/* Telefonda bölmələr üfüqi sürüşən sıra kimi */
+@media (max-width: 719.98px) {
+  .profile__list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 6px var(--gutter) 12px;
+  }
+  .profile__list::-webkit-scrollbar { display: none; }
+  .profile__list .card { flex: 0 0 var(--card-w); width: var(--card-w); }
+  .profile__who { gap: 14px; }
+}
+.settings { display: grid; gap: 10px; }
+.setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+.setting__text { flex: 1 1 220px; min-width: 0; }
+.setting__title { font-weight: 700; }
+.setting__note { margin-top: 2px; color: var(--muted); font-size: 0.85rem; }
+.setting .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+/* Açar (switch) */
+.switch {
+  position: relative;
+  flex: none;
+  width: 52px; height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background-color 0.2s;
+}
+.switch__thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s var(--ease-out);
+}
+.switch[aria-checked="true"] { background: var(--red); }
+.switch[aria-checked="true"] .switch__thumb { transform: translateX(22px); }
+
+/* Hero: "Salam, {ad}!" */
+.hero__hello { margin-bottom: 8px; color: #e4e4ec; font-size: 0.92rem; font-weight: 600; }
+.hero__hello[hidden] { display: none; }
+
+/* Təsdiq pəncərəsi */
+.confirm { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: var(--gutter); }
+.confirm[hidden] { display: none; }
+.confirm__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.72); opacity: 0; transition: opacity 0.2s; }
+.confirm__dialog {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 22px;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 30px 80px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translate3d(0, 12px, 0) scale(0.97);
+  transition: opacity 0.2s, transform 0.25s var(--ease-out);
+}
+.confirm.is-open .confirm__backdrop, .confirm.is-open .confirm__dialog { opacity: 1; }
+.confirm.is-open .confirm__dialog { transform: none; }
+.confirm__title { font-size: 1.2rem; font-weight: 800; }
+.confirm__text { margin-top: 8px; color: #c9c9d4; font-size: 0.95rem; }
+.confirm__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+@media (max-width: 379.98px) { .confirm__actions .btn { flex: 1 1 100%; } }
+
 /* ---------- Footer ---------- */
 .footer {
   padding: 28px var(--gutter) calc(32px + env(safe-area-inset-bottom));
@@ -1435,6 +1626,23 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 
 /* ---------- Azaldılmış hərəkət ---------- */
+html.reduce-motion { scroll-behavior: auto; }
+html.reduce-motion *, html.reduce-motion *::before, html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0ms !important;
+}
+html.reduce-motion .hero__slide.is-active .hero__bg { animation: none !important; }
+html.reduce-motion .hero__dot.is-active .hero__dot-fill { animation: none !important; transform: scaleX(1); }
+html.reduce-motion .hero__slide, html.reduce-motion .hero__slide.is-active, html.reduce-motion .hero__bg img { transition: none !important; }
+html.reduce-motion .stat { opacity: 1; }
+html.reduce-motion .poster.is-loading::before,
+html.reduce-motion .modal__banner.is-loading::before { animation: none !important; transform: none; }
+html.reduce-motion .track .card { opacity: 1; }
+html.reduce-motion .card:hover .card__inner, html.reduce-motion .card:focus-within .card__inner { transform: none !important; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

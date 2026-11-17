@@ -68,6 +68,7 @@ Yeni film əlavə etmək üçün `FILMS` massivinə bu formada obyekt yazın:
 | `#/janrlar`, `#/janr/{ad}` | Janr kartları və seçilmiş janrın filmləri |
 | `#/onillikler` | Onilliklər üzrə zaman xətti |
 | `#/siyahim` | Siyahım |
+| `#/profil` | Profil (header-in sağ küncündəki dairəvi avatar) |
 | `#/film/{id}` | Filmin pəncərəsini açır (paylaşmaq üçün) |
 
 Axtarış və janr filtri bütün səhifələrdə işləyir və səhifələr arasında saxlanılır. Brauzerin geri/irəli düymələri işləyir. Telefonda (≤768px) naviqasiya aşağıda sabit tab bardır.
@@ -82,11 +83,12 @@ Bütün bölmələr `films.js`-dən avtomatik yaranır.
 - **"Azərbaycan kinosu rəqəmlərdə"** (`#/filmler` səhifəsinin yuxarısında): film sayı, janr sayı, ən köhnə və ən yeni filmin ili, 0-dan sayılaraq artır.
 - **Axtarış:** adın bir hissəsinə görə işləyir, böyük-kiçik hərfə baxmır və Azərbaycan hərflərini düzgün müqayisə edir (`İ/i`, `I/ı`). Axtarış və janr birlikdə bütün sıralara tətbiq olunur. Filtrdən sonra boş qalan janr sıraları gizlənir.
 - **Siyahım:** `localStorage`-da saxlanılır, yəni yalnız bu brauzerdə qalır.
+- **Profil (`#/profil`):** hesab, giriş, parol və server yoxdur — hər şey yalnız bu brauzerin `localStorage`-ındadır (`netflixAz.profile`, `netflixAz.history`), sayta giriş heç vaxt bloklanmır. Ad (standart "Qonaq", ən çox 24 simvol, boş ola bilməz), 8 hazır avatar (emoji + rəngli dairə), sevimli janr; statistika kartları (Siyahımdakı film sayı, açılan film sayı, Siyahımda ən çox olan janr, Siyahımdakı ən köhnə film), "Son baxdıqlarım" (son açılan 10 film), Siyahımın qısa sırası, "Sənin üçün" (sevimli janrdan Siyahımda olmayan 6 film). Parametrlər: "Animasiyaları azalt", "Son baxdıqlarımı təmizlə", "Siyahımı təmizlə", "Profili sıfırla" — hamısı saytın öz təsdiq pəncərəsi ilə (brauzerin `alert/confirm` pəncərələri istifadə olunmur). Ad "Qonaq" deyilsə, slayderdə "Salam, {ad}!" yazısı görünür. `localStorage` bloklanıbsa (məs. bəzi gizli rejimlər), sayt yenə tam işləyir, sadəcə dəyişikliklər yadda qalmır.
 - **İzləmək üçün keçid:** Azərbaycanfilm-in rəsmi YouTube kanalında olan filmlərin kartında ▶ nişanı, pəncərəsində "▶ İzləmək üçün keçid" düyməsi var (yeni tabda açılır).
 - **Kinoteatrlarda:** `inCinemas: true` olan filmlərdə qırmızı nişan və "Hazırda yalnız kinoteatrlarda nümayiş olunur" yazısı.
 - **"Mənə film seç":** seçilmiş janrdan təsadüfi film seçir, axtarış mətnini nəzərə almır.
 - **Poster olmayanda:** film id-sindən yaranan fərqli tünd qradiyent, fonda filmin ili, böyük qalın ad. Bu rəsmi poster kimi təqdim edilmir.
-- Animasiyalar yalnız `transform` və `opacity` ilə qurulub. Sistemdə "azaldılmış hərəkət" (`prefers-reduced-motion`) aktivdirsə, animasiyalar və slayderin avtomatik keçidi söndürülür.
+- Animasiyalar yalnız `transform` və `opacity` ilə qurulub. Sistemdə "azaldılmış hərəkət" (`prefers-reduced-motion`) aktivdirsə və ya Profildə "Animasiyaları azalt" açılıbsa, animasiyalar və slayderin avtomatik keçidi söndürülür.
 
 ## Yayım
 
